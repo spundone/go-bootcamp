@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -102,7 +104,44 @@ func TestWcSingleFile(t *testing.T) {
 	}
 }
 
-// Rest of the test file remains the same...
+func TestWcErrors(t *testing.T) {
+	tmpDir, cleanup := createTestFiles(t)
+	defer cleanup()
+
+	tests := []struct {
+		name     string
+		file     string
+		expected string
+	}{
+		{
+			name:     "non-existent file",
+			file:     "nonexistent.txt",
+			expected: "./wc: nonexistent.txt: open: no such file or directory",
+		},
+		{
+			name:     "directory",
+			file:     "testdir",
+			expected: "./wc: testdir: read: is a directory",
+		},
+		{
+			name:     "protected file",
+			file:     "protected.txt",
+			expected: "./wc: protected.txt: open: permission denied",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Reset flags before each test
+			flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+			
+			output := runWc(t, filepath.Join(tmpDir, tt.file))
+			if !strings.Contains(strings.ToLower(output), strings.ToLower(tt.expected)) {
+				t.Errorf("got %q, want %q", output, tt.expected)
+			}
+		})
+	}
+}
 
 func runWc(t *testing.T, args ...string) string {
 	t.Helper()
