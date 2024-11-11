@@ -10,13 +10,15 @@ import (
 	"testing"
 )
 
-// Helper function to create test files
+// createTestFiles creates a temporary directory with test files
+// Returns the directory path and a cleanup function
 func createTestFiles(t *testing.T) (string, func()) {
 	tmpDir, err := ioutil.TempDir("", "wc-test")
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	// Define test files and their content
 	testFiles := map[string]string{
 		"single.txt":     "Hello World\n",
 		"multiple.txt":   "Line 1\nLine 2\nLine 3\n",
@@ -27,6 +29,7 @@ func createTestFiles(t *testing.T) (string, func()) {
 		"whitespace.txt": "Word1  Word2   Word3\n",
 	}
 
+	// Create each test file
 	for name, content := range testFiles {
 		path := filepath.Join(tmpDir, name)
 		if err := ioutil.WriteFile(path, []byte(content), 0644); err != nil {
@@ -34,23 +37,28 @@ func createTestFiles(t *testing.T) (string, func()) {
 		}
 	}
 
+	// Create a protected file for permission tests
 	protectedPath := filepath.Join(tmpDir, "protected.txt")
 	if err := os.Chmod(protectedPath, 0000); err != nil {
 		t.Fatal(err)
 	}
 
+	// Create a directory for directory test cases
 	if err := os.Mkdir(filepath.Join(tmpDir, "testdir"), 0755); err != nil {
 		t.Fatal(err)
 	}
 
+	// Return cleanup function
 	cleanup := func() {
-		os.Chmod(protectedPath, 0644)
+		os.Chmod(protectedPath, 0644) // Reset permissions to allow deletion
 		os.RemoveAll(tmpDir)
 	}
 
 	return tmpDir, cleanup
 }
 
+// TestWcSingleFile tests basic word count functionality
+// Tests different flag combinations on a single file
 func TestWcSingleFile(t *testing.T) {
 	tmpDir, cleanup := createTestFiles(t)
 	defer cleanup()
@@ -89,7 +97,7 @@ func TestWcSingleFile(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Reset flags before each test
+			// Reset flags for each test
 			flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 			
 			filePath := filepath.Join(tmpDir, tt.file)
@@ -98,12 +106,14 @@ func TestWcSingleFile(t *testing.T) {
 			expected := fmt.Sprintf(tt.expected, filePath)
 			
 			if output != expected {
-				t.Errorf("got %q, want %q", output, expected)
+				t.Errorf("\nExpected: %q\nGot: %q", expected, output)
 			}
 		})
 	}
 }
 
+// TestWcErrors tests error handling
+// Verifies proper behavior for non-existent files, directories, and permission issues
 func TestWcErrors(t *testing.T) {
 	tmpDir, cleanup := createTestFiles(t)
 	defer cleanup()
@@ -132,63 +142,35 @@ func TestWcErrors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Create a pipe to capture stderr
+			// Capture stderr output
 			oldStderr := os.Stderr
 			r, w, _ := os.Pipe()
 			os.Stderr = w
 
-			// Reset flags before each test
+			// Run the command
+			filePath := filepath.Join(tmpDir, tt.file)
 			flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 			
-			// Run wc with the test file
-			filePath := filepath.Join(tmpDir, tt.file)
-			_ = runWc(t, filePath) // Ignore the stdout output
+			// Execute with error handling
+			func() {
+				defer func() {
+					if r := recover(); r != nil {
+						// Expected program exit
+					}
+				}()
+				runWc(t, filePath)
+			}()
 
-			// Restore stderr and read error output
+			// Restore stderr and check output
 			w.Close()
 			os.Stderr = oldStderr
 			errOutput, _ := ioutil.ReadAll(r)
 
-			if !strings.Contains(strings.ToLower(string(errOutput)), strings.ToLower(tt.expected)) {
-				t.Errorf("got error %q, want error containing %q", errOutput, tt.expected)
+			if !strings.Contains(strings.ToLower(string(errOutput)), 
+				strings.ToLower(tt.expected)) {
+				t.Errorf("Expected error containing %q, got %q", 
+					tt.expected, string(errOutput))
 			}
 		})
 	}
-}
-
-func runWc(t *testing.T, args ...string) string {
-	t.Helper()
-	
-	// Reset flags and args
-	oldArgs := os.Args
-	oldFlags := flag.CommandLine
-	flag.CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-	
-	defer func() { 
-		os.Args = oldArgs 
-		flag.CommandLine = oldFlags
-	}()
-
-	os.Args = append([]string{"wc"}, args...)
-
-	// Capture stdout
-	oldStdout := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	// Run main and capture panics
-	defer func() {
-		if r := recover(); r != nil {
-			t.Logf("Recovered from panic: %v", r)
-		}
-	}()
-
-	main()
-
-	// Restore stdout and read output
-	w.Close()
-	os.Stdout = oldStdout
-	output, _ := ioutil.ReadAll(r)
-
-	return string(output)
 }
