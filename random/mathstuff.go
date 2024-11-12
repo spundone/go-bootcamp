@@ -1,7 +1,7 @@
 // code 
-package mathworks
+package mathstuff
 
-import *math*
+import "math"
 
 func evenNumbers (nums [] int) [] int {
 	var output []int
