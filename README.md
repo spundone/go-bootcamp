@@ -45,7 +45,7 @@ Each directory corresponds to a specific module or exercise from the bootcamp:
 │   ├── 1/even.go
 │   ├── 2/odd.go
 │   ├── ...
-├── student grading problem/
+├── student-grading-problem/
 │   ├── main.go
 │   ├── main_test.go
 ├── wc-project/
