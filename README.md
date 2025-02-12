@@ -1,6 +1,6 @@
 # Go Bootcamp Project
 
-This repository contains my implementation of exercises and projects from the [one2n.io Go Bootcamp](https://one2n.io/go-bootcamp) course.
+This repository contains my implementation of exercises and projects from the [One2N Go Bootcamp](https://one2n.io/go-bootcamp) course.
 
 ## Project Structure
 
