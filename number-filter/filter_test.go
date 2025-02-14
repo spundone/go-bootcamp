@@ -5,38 +5,42 @@ import (
     "testing"
 )
 
-func TestFilterEvenNumbers(t *testing.T) {
+func TestFilter(t *testing.T) {
     input := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-    expected := []int{2, 4, 6, 8, 10}
-    result := filterEvenNumbers(input)
-    if !reflect.DeepEqual(result, expected) {
-        t.Errorf("Expected %v, but got %v", expected, result)
+
+    tests := []struct {
+        name     string
+        filterFn func([]int) []int
+        expected []int
+    }{
+        {
+            name:     "EvenNumbers",
+            filterFn: filterEvenNumbers,
+            expected: []int{2, 4, 6, 8, 10},
+        },
+        {
+            name:     "OddNumbers",
+            filterFn: filterOddNumbers,
+            expected: []int{1, 3, 5, 7, 9},
+        },
+        {
+            name:     "PrimeNumbers",
+            filterFn: filterPrimeNumbers,
+            expected: []int{2, 3, 5, 7},
+        },
+        {
+            name:     "OddPrimeNumbers",
+            filterFn: filterOddPrimeNumbers,
+            expected: []int{3, 5, 7},
+        },
     }
-}
 
-func TestFilterOddNumbers(t *testing.T) {
-    input := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-    expected := []int{1, 3, 5, 7, 9}
-    result := filterOddNumbers(input)
-    if !reflect.DeepEqual(result, expected) {
-        t.Errorf("Expected %v, but got %v", expected, result)
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            result := tt.filterFn(input)
+            if !reflect.DeepEqual(result, tt.expected) {
+                t.Errorf("Expected %v, but got %v", tt.expected, result)
+            }
+        })
     }
-}
-
-func TestFilterPrimeNumbers(t *testing.T) {
-	input := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-	expected := []int{2, 3, 5, 7}
-	result := filterPrimeNumbers(input)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("Expected %v, but got %v", expected, result)
-	}
-}
-
-func TestFilterOddPrimeNumbers(t *testing.T) {
-	input := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-	expected := []int{3, 5, 7}
-	result := filterOddPrimeNumbers(input)
-	if !reflect.DeepEqual(result, expected) {
-		t.Errorf("Expected %v, but got %v", expected, result)
-	}
 }
