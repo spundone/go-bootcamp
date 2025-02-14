@@ -29,34 +29,6 @@ The project follows the course structure and includes implementations of various
 2. Navigate to the project directory: `cd go-bootcamp`
 3. Run the tests: `go test ./...`
 
-## Project Organization
-
-Each directory corresponds to a specific module or exercise from the bootcamp:
-
-```
-.
-├── README.md
-├── tour-of-go/
-│   ├── basic-syntax/
-│   ├── functions/
-│   ├── data-structures/
-│   ├── concurrency/
-└── number-filtering/
-│   ├── 1/even.go
-│   ├── 2/odd.go
-│   ├── ...
-├── student-grading-problem/
-│   ├── main.go
-│   ├── main_test.go
-├── wc-project/
-│   ├── main.go
-│   ├── main_test.go
-│   ├── shakespeare_test.go
-├── grep-project/
-│   ├── main.go
-│   ├── main_test.go
-```
-
 ## Contributing
 
 This is a personal learning project, but suggestions and improvements are welcome! Feel free to open an issue or submit a pull request.
