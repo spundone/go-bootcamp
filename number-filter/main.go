@@ -5,9 +5,9 @@ import (
 )
 
 // evenNumbers filters out even numbers from a slice of integers.
-func evenNumbers(numbers []int) []int {
+func evenNumbers(num []int) []int {
     var evens []int
-    for _, num := range numbers {
+    for _, num := range num {
         if num%2 == 0 {
             evens = append(evens, num)
         }
@@ -16,9 +16,9 @@ func evenNumbers(numbers []int) []int {
 }
 
 // oddNumbers filters out odd numbers from a slice of integers.
-func oddNumbers(numbers []int) []int {
+func oddNumbers(num []int) []int {
     var odds []int
-    for _, num := range numbers {
+    for _, num := range num {
         if num%2 != 0 {
             odds = append(odds, num)
         }
@@ -41,9 +41,9 @@ func isPrime(num int) bool {
 
 
 // primeNumbers filters out prime numbers from a slice of integers.
-func primeNumbers(numbers []int) []int {
+func primeNumbers(num []int) []int {
 	var primes []int
-	for _, num := range numbers {
+	for _, num := range num {
 		if isPrime(num) {
 			primes = append(primes, num)
 		}
@@ -52,9 +52,9 @@ func primeNumbers(numbers []int) []int {
 }
 
 // oddPrimeNumbers filters out odd prime numbers from a slice of integers.
-func oddPrimeNumbers(numbers []int) []int {
+func oddPrimeNumbers(num []int) []int {
 	var odds []int
-	for _, num := range numbers {
+	for _, num := range num {
 		if isPrime(num) && num%2 != 0 {
 			odds = append(odds, num)
 		}
@@ -63,9 +63,9 @@ func oddPrimeNumbers(numbers []int) []int {
 }
 
 // evenMultiplesOf5 filters out even multiples of 5 from a slice of integers.
-func evenMultiplesOf5(numbers []int) []int {
+func evenMultiplesOf5(num []int) []int {
 	var evens []int
-	for _, num := range numbers {
+	for _, num := range num {
 		if num%2 == 0 && num%5 == 0 {
 			evens = append(evens, num)
 		}
@@ -73,10 +73,10 @@ func evenMultiplesOf5(numbers []int) []int {
 	return evens
 }
 
-// oddMultiplesOf3 filters out odd multiples of 3 from a slice of integers greater than 10.
-func oddMultiplesOf3(numbers []int) []int {
+// oddMultiplesOf3GreaterThan10 filters out odd multiples of 3 from a slice of integers greater than 10.
+func oddMultiplesOf3GreaterThan10(num []int) []int {
 	var odds []int
-	for _, num := range numbers {
+	for _, num := range num {
 		if num%2 != 0 && num%3 == 0 && num > 10 {	
 			odds = append(odds, num)
 		}
@@ -85,9 +85,9 @@ func oddMultiplesOf3(numbers []int) []int {
 }
 
 // numbers filters out numbers from a slice of integers that match all the conditions.
-func numbers(numbers []int, conditions []func(int) bool) []int {
+func numbers(num []int, conditions []func(int) bool) []int {
 	var filtered []int
-	for _, num := range numbers {
+	for _, num := range num {
 		matchesAll := true
 		for _, condition := range conditions {
 			if !condition(num) {
@@ -111,6 +111,6 @@ func main() {
 	fmt.Println("Prime numbers:", primeNumbers(numbers))
 	fmt.Println("Odd prime numbers:", oddPrimeNumbers(numbers))
 	fmt.Println("Even multiples of 5:", evenMultiplesOf5(numbersExtended))
-	fmt.Println("Odd multiples of 3 greater than 10", oddMultiplesOf3(numbersExtended))
+	fmt.Println("Odd multiples of 3 greater than 10", oddMultiplesOf3GreaterThan10(numbersExtended))
 	//fmt.Println("Even multiples of 5 and odd multiples of 3", numbers(numbersExtended, []func(int) bool{evenMultiplesOf5, oddMultiplesOf3}))
 }

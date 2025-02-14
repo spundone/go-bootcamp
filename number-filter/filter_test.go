@@ -40,8 +40,8 @@ func TestFilter(t *testing.T) {
             expected: []int{10, 20},
         },
         {
-            name:     "OddMultiplesOf3",
-            	filterFn: oddMultiplesOf3,
+            name:     "OddMultiplesOf3GreaterThan10",
+            filterFn: oddMultiplesOf3GreaterThan10,
             expected: []int{15},
         },
 		// {
@@ -55,7 +55,7 @@ func TestFilter(t *testing.T) {
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
             var result []int
-            if tt.name == "EvenMultiplesOf5" || tt.name == "OddMultiplesOf3" {
+            if tt.name == "EvenMultiplesOf5" || tt.name == "OddMultiplesOf3GreaterThan10" {
                 result = tt.filterFn(inputExtended)
             } else {
                 result = tt.filterFn(input)
