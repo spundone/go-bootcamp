@@ -7,6 +7,7 @@ import (
 
 func TestFilter(t *testing.T) {
     input := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    inputExtended := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
 
     tests := []struct {
         name     string
@@ -36,18 +37,24 @@ func TestFilter(t *testing.T) {
         {
             name:     "EvenMultiplesOf5",
             filterFn: filterEvenMultiplesOf5,
-            expected: []int{10},
+            expected: []int{10, 20},
         },
         {
             name:     "OddMultiplesOf3",
             filterFn: filterOddMultiplesOf3,
-            expected: []int{3, 9},
+            expected: []int{15},
         },
+		
     }
 
     for _, tt := range tests {
         t.Run(tt.name, func(t *testing.T) {
-            result := tt.filterFn(input)
+            var result []int
+            if tt.name == "EvenMultiplesOf5" || tt.name == "OddMultiplesOf3" {
+                result = tt.filterFn(inputExtended)
+            } else {
+                result = tt.filterFn(input)
+            }
             if !reflect.DeepEqual(result, tt.expected) {
                 t.Errorf("Expected %v, but got %v", tt.expected, result)
             }

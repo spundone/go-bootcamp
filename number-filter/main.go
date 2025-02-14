@@ -73,11 +73,11 @@ func filterEvenMultiplesOf5(numbers []int) []int {
 	return evens
 }
 
-// Given a list of integers, write a program to return only the odd and multiples of 3 from this list.
+// Given a list of integers, write a program to return only the odd and multiples of 3 from this list greater than 10.
 func filterOddMultiplesOf3(numbers []int) []int {
 	var odds []int
 	for _, num := range numbers {
-		if num%2 != 0 && num%3 == 0 {	
+		if num%2 != 0 && num%3 == 0 && num > 10 {	
 			odds = append(odds, num)
 		}
 	}
@@ -89,10 +89,11 @@ func filterOddMultiplesOf3(numbers []int) []int {
 // main function
 func main() {
 	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	numbersExtended := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
 	fmt.Println("Even numbers:", filterEvenNumbers(numbers))
 	fmt.Println("Odd numbers:", filterOddNumbers(numbers))
 	fmt.Println("Prime numbers:", filterPrimeNumbers(numbers))
 	fmt.Println("Odd prime numbers:", filterOddPrimeNumbers(numbers))
-	fmt.Println("Even multiples of 5:", filterEvenMultiplesOf5(numbers))
-	fmt.Println("Odd multiples of 3:", filterOddMultiplesOf3(numbers))
+	fmt.Println("Even multiples of 5:", filterEvenMultiplesOf5(numbersExtended))
+	fmt.Println("Odd multiples of 3:", filterOddMultiplesOf3(numbersExtended))
 }
