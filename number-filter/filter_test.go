@@ -33,6 +33,16 @@ func TestFilter(t *testing.T) {
             filterFn: filterOddPrimeNumbers,
             expected: []int{3, 5, 7},
         },
+        {
+            name:     "EvenMultiplesOf5",
+            filterFn: filterEvenMultiplesOf5,
+            expected: []int{10},
+        },
+        {
+            name:     "OddMultiplesOf3",
+            filterFn: filterOddMultiplesOf3,
+            expected: []int{3, 9},
+        },
     }
 
     for _, tt := range tests {
