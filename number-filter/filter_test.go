@@ -22,3 +22,21 @@ func TestFilterOddNumbers(t *testing.T) {
         t.Errorf("Expected %v, but got %v", expected, result)
     }
 }
+
+func TestFilterPrimeNumbers(t *testing.T) {
+	input := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	expected := []int{2, 3, 5, 7}
+	result := filterPrimeNumbers(input)
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Expected %v, but got %v", expected, result)
+	}
+}
+
+func TestFilterOddPrimeNumbers(t *testing.T) {
+	input := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	expected := []int{3, 5, 7}
+	result := filterOddPrimeNumbers(input)
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Expected %v, but got %v", expected, result)
+	}
+}
