@@ -16,34 +16,39 @@ func TestFilter(t *testing.T) {
     }{
         {
             name:     "EvenNumbers",
-            filterFn: filterEvenNumbers,
+            filterFn: evenNumbers,
             expected: []int{2, 4, 6, 8, 10},
         },
         {
             name:     "OddNumbers",
-            filterFn: filterOddNumbers,
+            filterFn: oddNumbers,
             expected: []int{1, 3, 5, 7, 9},
         },
         {
             name:     "PrimeNumbers",
-            filterFn: filterPrimeNumbers,
+            filterFn: primeNumbers,
             expected: []int{2, 3, 5, 7},
         },
         {
             name:     "OddPrimeNumbers",
-            filterFn: filterOddPrimeNumbers,
+            filterFn: oddPrimeNumbers,
             expected: []int{3, 5, 7},
         },
         {
             name:     "EvenMultiplesOf5",
-            filterFn: filterEvenMultiplesOf5,
+            filterFn: evenMultiplesOf5,
             expected: []int{10, 20},
         },
         {
             name:     "OddMultiplesOf3",
-            filterFn: filterOddMultiplesOf3,
+            	filterFn: oddMultiplesOf3,
             expected: []int{15},
         },
+		// {
+		// 	name:     "EvenMultiplesOf5AndOddMultiplesOf3",
+		// 	filterFn: filterNumbers(inputExtended, []func(int) bool{filterEvenMultiplesOf5, filterOddMultiplesOf3}),
+		// 	expected: []int{10, 15},
+		// },
 		
     }
 
