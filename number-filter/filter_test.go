@@ -44,12 +44,16 @@ func TestFilter(t *testing.T) {
             filterFn: oddMultiplesOf3GreaterThan10,
             expected: []int{15},
         },
-		// {
-		// 	name:     "EvenMultiplesOf5AndOddMultiplesOf3",
-		// 	filterFn: filterNumbers(inputExtended, []func(int) bool{filterEvenMultiplesOf5, filterOddMultiplesOf3}),
-		// 	expected: []int{10, 15},
-		// },
-		
+		{
+			name:     "EvenMultiplesOf5AndOddMultiplesOf3",
+			filterFn: andNumbers(inputExtended, evenMultiplesOf5, oddMultiplesOf3GreaterThan10),
+			expected: []int{10, 15},
+		},
+		{
+			name:     "EvenMultiplesOf5OrOddMultiplesOf3",
+			filterFn: orNumbers(inputExtended, evenMultiplesOf5, oddMultiplesOf3GreaterThan10),
+			expected: []int{10, 15, 20},
+		},
     }
 
     for _, tt := range tests {
