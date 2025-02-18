@@ -47,37 +47,37 @@ func TestFilter(t *testing.T) {
 		{
 			name: "AndNumber1",
 			// odd, greater than 5, multiple of 3
-			filterFn: func(nums []int) []int { return andNumbers(nums, odd, greaterThanN(5), multiplesOf(3)) },
+			filterFn: func(nums []int) []int { return filtersAll(nums, odd, greaterThanN(5), multiplesOf(3)) },
 			expected: []int{9, 15},
 		},
 		{
 			name: "AndNumber2",
 			// even, less than 15, multiple of 3
-			filterFn: func(nums []int) []int { return andNumbers(nums, even, lessThanN(15), multiplesOf(3)) },
+			filterFn: func(nums []int) []int { return filtersAll(nums, even, lessThanN(15), multiplesOf(3)) },
 			expected: []int{6, 12},
 		},
 		{
 			name: "AndNumber3",
 			// prime, greater than 10, less than 15
-			filterFn: func(nums []int) []int { return andNumbers(nums, prime, greaterThanN(10), lessThanN(15)) },
+			filterFn: func(nums []int) []int { return filtersAll(nums, prime, greaterThanN(10), lessThanN(15)) },
 			expected: []int{11, 13},
 		},
 		{
 			name:     "OrNumber1",
             // greater than 15, multiple of 5
-			filterFn: func(nums []int) []int { return orNumbers(nums, greaterThanN(15), multiplesOf(5)) }, //unsure about this one
+			filterFn: func(nums []int) []int { return filterAny(nums, greaterThanN(15), multiplesOf(5)) }, //unsure about this one
 			expected: []int{5, 10, 15, 16, 17, 18, 19, 20},
 		},
         {
             name: "OrNumber2",
             //less than 6, multiple of 3
-            filterFn: func(nums []int) []int { return orNumbers(nums, lessThanN(6), multiplesOf(3)) },
+            filterFn: func(nums []int) []int { return filterAny(nums, lessThanN(6), multiplesOf(3)) },
             expected: []int{1, 2, 3, 4, 5, 6, 9, 12, 15, 18},
         },
         {
             name: "OrNumber3",
             // greater than 10, less than 15
-            filterFn: func(nums []int) []int { return orNumbers(nums, greaterThanN(10), lessThanN(15)) },
+            filterFn: func(nums []int) []int { return filterAny(nums, greaterThanN(10), lessThanN(15)) },
             expected: []int{1, 2, 3 ,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
         },
 	}

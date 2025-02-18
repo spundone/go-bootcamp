@@ -14,7 +14,7 @@ func greaterThanN(n int) Condition { return func(m int) bool { return m > n } }
 func multiplesOf(n int) Condition  { return func(m int) bool { return m%n == 0 } }
 func lessThanN(n int) Condition    { return func(m int) bool { return m < n } }
 
-// evenNumbers filters out even numbers from a slice of integers.
+// filterEven filters out even numbers from a slice of integers.
 func filterEven(num []int) []int {
 	if len(num) == 0 {
 		return []int{}
@@ -28,7 +28,7 @@ func filterEven(num []int) []int {
 	return evens
 }
 
-// oddNumbers filters out odd numbers from a slice of integers.
+// filterOdd filters out odd numbers from a slice of integers.
 func filterOdd(num []int) []int {
 	if len(num) == 0 {
 		return []int{}
@@ -111,8 +111,8 @@ func oddMultiplesOf3GreaterThan10(num []int) []int {
 	return odds
 }
 
-// andNumbers filters out numbers from a slice of integers that match all the conditions.
-func andNumbers(num []int, conditions ...Condition) []int {
+// filtersAll filters out numbers from a slice of integers that match all the conditions.
+func filtersAll(num []int, conditions ...Condition) []int {
 	if len(num) == 0 {
 		return []int{}
 	}
@@ -132,8 +132,8 @@ func andNumbers(num []int, conditions ...Condition) []int {
 	return filtered
 }
 
-// orNumbers filters out numbers from a slice of integers that match any of the conditions.
-func orNumbers(num []int, conditions ...Condition) []int {
+// filterAny filters out numbers from a slice of integers that match any of the conditions.
+func filterAny(num []int, conditions ...Condition) []int {
 	if len(num) == 0 {
 		return []int{}
 	}
@@ -159,11 +159,11 @@ func main() {
 	fmt.Println("Odd prime numbers:", oddPrimeNumbers(numbers))
 	fmt.Println("Even multiples of 5:", evenMultiplesOf5(numbersExtended))
 	fmt.Println("Odd multiples of 3 greater than 10", oddMultiplesOf3GreaterThan10(numbersExtended))
-	fmt.Println("AndNumber", andNumbers(numbersExtended, odd, greaterThanN(5), multiplesOf(3)))
-	fmt.Println("AndNumber2", andNumbers(numbersExtended, even, lessThanN(15), multiplesOf(3)))
-	fmt.Println("AndNumber3", andNumbers(numbersExtended, prime, greaterThanN(10), lessThanN(15)))
-	fmt.Println("OrNumber", orNumbers(numbersExtended, greaterThanN(15), multiplesOf(5)))
-	fmt.Println("OrNumber2", orNumbers(numbersExtended, lessThanN(6), multiplesOf(3)))
-	fmt.Println("OrNumber3", orNumbers(numbersExtended, greaterThanN(10), lessThanN(15)))
+	fmt.Println("AndNumber", filtersAll(numbersExtended, odd, greaterThanN(5), multiplesOf(3)))
+	fmt.Println("AndNumber2", filtersAll(numbersExtended, even, lessThanN(15), multiplesOf(3)))
+	fmt.Println("AndNumber3", filtersAll(numbersExtended, prime, greaterThanN(10), lessThanN(15)))
+	fmt.Println("OrNumber", filterAny(numbersExtended, greaterThanN(15), multiplesOf(5)))
+	fmt.Println("OrNumber2", filterAny(numbersExtended, lessThanN(6), multiplesOf(3)))
+	fmt.Println("OrNumber3", filterAny(numbersExtended, greaterThanN(10), lessThanN(15)))
 
 }
