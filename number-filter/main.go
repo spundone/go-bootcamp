@@ -137,10 +137,10 @@ func orNumbers(num []int, conditions ...Condition) []int {
 		return []int{}
 	}
 	var filtered []int
-	for _, num := range num {
+	for _, n := range num {
 		for _, condition := range conditions {
-			if condition(num) {
-				filtered = append(filtered, num)
+			if condition(n) {
+				filtered = append(filtered, n)
 				break
 			}
 		}
