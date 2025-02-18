@@ -158,11 +158,11 @@ func main() {
 	fmt.Println("Odd prime numbers:", oddPrimeNumbers(numbers))
 	fmt.Println("Even multiples of 5:", evenMultiplesOf5(numbersExtended))
 	fmt.Println("Odd multiples of 3 greater than 10", oddMultiplesOf3GreaterThan10(numbersExtended))
-	fmt.Println("AndNumber", filtersAll(numbersExtended, odd, greaterThanN(5), multiplesOf(3)))
-	fmt.Println("AndNumber2", filtersAll(numbersExtended, even, lessThanN(15), multiplesOf(3)))
-	fmt.Println("AndNumber3", filtersAll(numbersExtended, prime, greaterThanN(10), lessThanN(15)))
-	fmt.Println("OrNumber", filterAny(numbersExtended, greaterThanN(15), multiplesOf(5)))
-	fmt.Println("OrNumber2", filterAny(numbersExtended, lessThanN(6), multiplesOf(3)))
-	fmt.Println("OrNumber3", filterAny(numbersExtended, greaterThanN(10), lessThanN(15)))
+	fmt.Println("Numbers that are odd, greater than 5, and multiples of 3", filtersAll(numbersExtended, odd, greaterThanN(5), multiplesOf(3)))
+	fmt.Println("Numbers that are even, less than 15, and multiples of 3", filtersAll(numbersExtended, even, lessThanN(15), multiplesOf(3)))
+	fmt.Println("Numbers that are prime, greater than 10, and less than 15", filtersAll(numbersExtended, prime, greaterThanN(10), lessThanN(15)))
+	fmt.Println("Numbers that are either greater than 15 and multiples of 5", filterAny(numbersExtended, greaterThanN(15), multiplesOf(5)))
+	fmt.Println("Numbers that are either less than 6 and multiples of 3", filterAny(numbersExtended, lessThanN(6), multiplesOf(3)))
+	fmt.Println("Numbers that are either greater than 10 and less than 15", filterAny(numbersExtended, greaterThanN(10), lessThanN(15)))
 
 }
