@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"sync"
 	"testing"
 )
 
@@ -63,27 +64,35 @@ func TestFilter(t *testing.T) {
 			expected: []int{11, 13},
 		},
 		{
-			name:     "OrNumber1",
-            // greater than 15, multiple of 5
-			filterFn: func(nums []int) []int { return orNumbers(nums, greaterThanN(15), multiplesOf(5)) }, //unsure about this one
+			name: "OrNumber1",
+			// greater than 15, multiple of 5
+			filterFn: func(nums []int) []int { return orNumbers(nums, greaterThanN(15), multiplesOf(5)) },
 			expected: []int{5, 10, 15, 16, 17, 18, 19, 20},
 		},
-        {
-            name: "OrNumber2",
-            //less than 6, multiple of 3
-            filterFn: func(nums []int) []int { return orNumbers(nums, lessThanN(6), multiplesOf(3)) },
-            expected: []int{1, 2, 3, 4, 5, 6, 9, 12, 15, 18},
-        },
-        {
-            name: "OrNumber3",
-            // greater than 10, less than 15
-            filterFn: func(nums []int) []int { return orNumbers(nums, greaterThanN(10), lessThanN(15)) },
-            expected: []int{1, 2, 3 ,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
-        },
+		{
+			name: "OrNumber2",
+			//less than 6, multiple of 3
+			filterFn: func(nums []int) []int { return orNumbers(nums, lessThanN(6), multiplesOf(3)) },
+			expected: []int{1, 2, 3, 4, 5, 6, 9, 12, 15, 18},
+		},
+		{
+			name: "OrNumber3",
+			// greater than 10, less than 15
+			filterFn: func(nums []int) []int { return orNumbers(nums, greaterThanN(10), lessThanN(15)) },
+			expected: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+		},
 	}
 
+	var wg sync.WaitGroup
+
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		wg.Add(1)
+		go func(tt struct {
+			name     string
+			filterFn func([]int) []int
+			expected []int
+		}) {
+			defer wg.Done()
 			var result []int
 			if tt.name == "EvenMultiplesOf5" || tt.name == "OddMultiplesOf3GreaterThan10" || tt.name == "AndNumber1" || tt.name == "AndNumber2" || tt.name == "AndNumber3" || tt.name == "OrNumber1" || tt.name == "OrNumber2" || tt.name == "OrNumber3" {
 				result = tt.filterFn(inputExtended)
@@ -91,8 +100,9 @@ func TestFilter(t *testing.T) {
 				result = tt.filterFn(input)
 			}
 			if !reflect.DeepEqual(result, tt.expected) {
-				t.Errorf("Expected %v, but got %v", tt.expected, result)
+				t.Errorf("Expected %v, but got %v for test %s", tt.expected, result, tt.name)
 			}
-		})
+		}(tt)
 	}
+	wg.Wait()
 }
