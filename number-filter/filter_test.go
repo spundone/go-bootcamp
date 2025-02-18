@@ -63,23 +63,23 @@ func TestFilter(t *testing.T) {
 			expected: []int{11, 13},
 		},
 		{
-			name:     "OrNumber1",
-            // greater than 15, multiple of 5
+			name: "OrNumber1",
+			// greater than 15, multiple of 5
 			filterFn: func(nums []int) []int { return filterAny(nums, greaterThanN(15), multiplesOf(5)) }, //unsure about this one
 			expected: []int{5, 10, 15, 16, 17, 18, 19, 20},
 		},
-        {
-            name: "OrNumber2",
-            //less than 6, multiple of 3
-            filterFn: func(nums []int) []int { return filterAny(nums, lessThanN(6), multiplesOf(3)) },
-            expected: []int{1, 2, 3, 4, 5, 6, 9, 12, 15, 18},
-        },
-        {
-            name: "OrNumber3",
-            // greater than 10, less than 15
-            filterFn: func(nums []int) []int { return filterAny(nums, greaterThanN(10), lessThanN(15)) },
-            expected: []int{1, 2, 3 ,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
-        },
+		{
+			name: "OrNumber2",
+			//less than 6, multiple of 3
+			filterFn: func(nums []int) []int { return filterAny(nums, lessThanN(6), multiplesOf(3)) },
+			expected: []int{1, 2, 3, 4, 5, 6, 9, 12, 15, 18},
+		},
+		{
+			name: "OrNumber3",
+			// greater than 10, less than 15
+			filterFn: func(nums []int) []int { return filterAny(nums, greaterThanN(10), lessThanN(15)) },
+			expected: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
+		},
 	}
 
 	for _, tt := range tests {

@@ -4,7 +4,6 @@ import (
 	"fmt"
 )
 
-
 type Condition func(n int) bool
 
 func odd(n int) bool               { return n%2 != 0 }
