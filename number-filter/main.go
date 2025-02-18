@@ -88,6 +88,7 @@ type Condition func(n int) bool
 
 func odd(n int) bool { return n%2 != 0 }
 func even(n int) bool { return !odd(n) }
+func prime(n int) bool {return isPrime(n)}
 func greaterThanN(n int) Condition { return func(m int) bool { return m > n } }
 func multiplesOf(n int) Condition { return func(m int) bool { return m%n == 0 } }
 func lessThanN(n int) Condition { return func(m int) bool { return m < n } }
@@ -137,7 +138,9 @@ func main() {
 	fmt.Println("Odd multiples of 3 greater than 10", oddMultiplesOf3GreaterThan10(numbersExtended))
 	fmt.Println("AndNumber", andNumbers(numbersExtended, odd, greaterThanN(5), multiplesOf(3)))
 	fmt.Println("AndNumber2", andNumbers(numbersExtended, even, lessThanN(15), multiplesOf(3)))
-	//fmt.Println("OrNumber", orNumbers(numbersExtended, primeNumbers, greaterThanN(15), multiplesOf(5)))
+	fmt.Println("AndNumber3", andNumbers(numbersExtended, prime, greaterThanN(10), lessThanN(15)))
+	fmt.Println("OrNumber", orNumbers(numbersExtended, greaterThanN(15), multiplesOf(5)))
 	fmt.Println("OrNumber2", orNumbers(numbersExtended, lessThanN(6), multiplesOf(3)))
+	fmt.Println("OrNumber3", orNumbers(numbersExtended, greaterThanN(10), lessThanN(15)))
 
 }
