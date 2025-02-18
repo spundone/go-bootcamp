@@ -4,15 +4,25 @@ import (
 	"fmt"
 )
 
+
+type Condition func(n int) bool
+
+func odd(n int) bool               { return n%2 != 0 }
+func even(n int) bool              { return !odd(n) }
+func prime(n int) bool             { return isPrime(n) }
+func greaterThanN(n int) Condition { return func(m int) bool { return m > n } }
+func multiplesOf(n int) Condition  { return func(m int) bool { return m%n == 0 } }
+func lessThanN(n int) Condition    { return func(m int) bool { return m < n } }
+
 // evenNumbers filters out even numbers from a slice of integers.
 func filterEven(num []int) []int {
 	if len(num) == 0 {
 		return []int{}
 	}
 	var evens []int
-	for _, num := range num {
-		if num%2 == 0 {
-			evens = append(evens, num)
+	for _, n := range num {
+		if even(n) {
+			evens = append(evens, n)
 		}
 	}
 	return evens
@@ -24,9 +34,9 @@ func filterOdd(num []int) []int {
 		return []int{}
 	}
 	var odds []int
-	for _, num := range num {
-		if num%2 != 0 {
-			odds = append(odds, num)
+	for _, n := range num {
+		if odd(n) {
+			odds = append(odds, n)
 		}
 	}
 	return odds
@@ -51,9 +61,9 @@ func primeNumbers(num []int) []int {
 		return []int{}
 	}
 	var primes []int
-	for _, num := range num {
-		if isPrime(num) {
-			primes = append(primes, num)
+	for _, n := range num {
+		if isPrime(n) {
+			primes = append(primes, n)
 		}
 	}
 	return primes
@@ -65,9 +75,9 @@ func oddPrimeNumbers(num []int) []int {
 		return []int{}
 	}
 	var odds []int
-	for _, num := range num {
-		if isPrime(num) && num%2 != 0 {
-			odds = append(odds, num)
+	for _, n := range num {
+		if isPrime(n) && n%2 != 0 {
+			odds = append(odds, n)
 		}
 	}
 	return odds
@@ -79,9 +89,9 @@ func evenMultiplesOf5(num []int) []int {
 		return []int{}
 	}
 	var evens []int
-	for _, num := range num {
-		if num%2 == 0 && num%5 == 0 {
-			evens = append(evens, num)
+	for _, n := range num {
+		if n%2 == 0 && n%5 == 0 {
+			evens = append(evens, n)
 		}
 	}
 	return evens
@@ -93,22 +103,13 @@ func oddMultiplesOf3GreaterThan10(num []int) []int {
 		return []int{}
 	}
 	var odds []int
-	for _, num := range num {
-		if num%2 != 0 && num%3 == 0 && num > 10 {
-			odds = append(odds, num)
+	for _, n := range num {
+		if n%2 != 0 && n%3 == 0 && n > 10 {
+			odds = append(odds, n)
 		}
 	}
 	return odds
 }
-
-type Condition func(n int) bool
-
-func odd(n int) bool               { return n%2 != 0 }
-func even(n int) bool              { return !odd(n) }
-func prime(n int) bool             { return isPrime(n) }
-func greaterThanN(n int) Condition { return func(m int) bool { return m > n } }
-func multiplesOf(n int) Condition  { return func(m int) bool { return m%n == 0 } }
-func lessThanN(n int) Condition    { return func(m int) bool { return m < n } }
 
 // andNumbers filters out numbers from a slice of integers that match all the conditions.
 func andNumbers(num []int, conditions ...Condition) []int {
@@ -117,15 +118,15 @@ func andNumbers(num []int, conditions ...Condition) []int {
 	}
 	var filtered []int
 
-	for _, num := range num {
+	for _, n := range num {
 		matchesAll := true
 		for _, condition := range conditions {
-			if !condition(num) {
+			if !condition(n) {
 				matchesAll = false
 			}
 		}
 		if matchesAll {
-			filtered = append(filtered, num)
+			filtered = append(filtered, n)
 		}
 	}
 	return filtered
