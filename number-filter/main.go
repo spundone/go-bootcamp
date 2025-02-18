@@ -9,14 +9,14 @@ type Condition func(n int) bool
 
 func odd(n int) bool               { return n%2 != 0 }
 func even(n int) bool              { return !odd(n) }
-func prime(n int) bool             { return isPrime(n) }
+func prime(n int) bool             { return isPrime(n) } //isPrime is a function defined in line 46
 func greaterThanN(n int) Condition { return func(m int) bool { return m > n } }
 func multiplesOf(n int) Condition  { return func(m int) bool { return m%n == 0 } }
 func lessThanN(n int) Condition    { return func(m int) bool { return m < n } }
 
 // filterEven filters out even numbers from a slice of integers.
 func filterEven(num []int) []int {
-	if len(num) == 0 {
+	if len(num) == 0 { //if the slice is empty, return an empty slice
 		return []int{}
 	}
 	var evens []int
@@ -57,7 +57,7 @@ func isPrime(num int) bool {
 
 // primeNumbers filters out prime numbers from a slice of integers.
 func primeNumbers(num []int) []int {
-	if len(num) == 0 {
+	if len(num) == 0 { //if the slice is empty, return an empty slice
 		return []int{}
 	}
 	var primes []int
@@ -71,7 +71,7 @@ func primeNumbers(num []int) []int {
 
 // oddPrimeNumbers filters out odd prime numbers from a slice of integers.
 func oddPrimeNumbers(num []int) []int {
-	if len(num) == 0 {
+	if len(num) == 0 { //if the slice is empty, return an empty slice
 		return []int{}
 	}
 	var odds []int
@@ -99,7 +99,7 @@ func evenMultiplesOf5(num []int) []int {
 
 // oddMultiplesOf3GreaterThan10 filters out odd multiples of 3 from a slice of integers greater than 10.
 func oddMultiplesOf3GreaterThan10(num []int) []int {
-	if len(num) == 0 {
+	if len(num) == 0 { //if the slice is empty, return an empty slice
 		return []int{}
 	}
 	var odds []int
@@ -113,11 +113,10 @@ func oddMultiplesOf3GreaterThan10(num []int) []int {
 
 // filtersAll filters out numbers from a slice of integers that match all the conditions.
 func filtersAll(num []int, conditions ...Condition) []int {
-	if len(num) == 0 {
+	if len(num) == 0 { //if the slice is empty, return an empty slice
 		return []int{}
 	}
 	var filtered []int
-
 	for _, n := range num {
 		matchesAll := true
 		for _, condition := range conditions {
@@ -134,7 +133,7 @@ func filtersAll(num []int, conditions ...Condition) []int {
 
 // filterAny filters out numbers from a slice of integers that match any of the conditions.
 func filterAny(num []int, conditions ...Condition) []int {
-	if len(num) == 0 {
+	if len(num) == 0 { //if the slice is empty, return an empty slice
 		return []int{}
 	}
 	var filtered []int
