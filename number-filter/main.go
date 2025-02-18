@@ -1,47 +1,55 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 // evenNumbers filters out even numbers from a slice of integers.
-func evenNumbers(num []int) []int {
-    var evens []int
-    for _, num := range num {
-        if num%2 == 0 {
-            evens = append(evens, num)
-        }
-    }
-    return evens
+func filterEven(num []int) []int {
+	if len(num) == 0 {
+		return []int{}
+	}
+	var evens []int
+	for _, num := range num {
+		if num%2 == 0 {
+			evens = append(evens, num)
+		}
+	}
+	return evens
 }
 
 // oddNumbers filters out odd numbers from a slice of integers.
-func oddNumbers(num []int) []int {
-    var odds []int
-    for _, num := range num {
-        if num%2 != 0 {
-            odds = append(odds, num)
-        }
-    }
-    return odds
+func filterOdd(num []int) []int {
+	if len(num) == 0 {
+		return []int{}
+	}
+	var odds []int
+	for _, num := range num {
+		if num%2 != 0 {
+			odds = append(odds, num)
+		}
+	}
+	return odds
 }
 
 // isPrime checks if a number is prime.
 func isPrime(num int) bool {
-    if num <= 1 {
-        return false
-    }
-    for i := 2; i*i <= num; i++ { //another way is to only check up to sqrt(num)
-        if num%i == 0 {
-            return false
-        }
-    }
-    return true
+	if num <= 1 {
+		return false
+	}
+	for i := 2; i*i <= num; i++ { //another way is to only check up to sqrt(num)
+		if num%i == 0 {
+			return false
+		}
+	}
+	return true
 }
-
 
 // primeNumbers filters out prime numbers from a slice of integers.
 func primeNumbers(num []int) []int {
+	if len(num) == 0 {
+		return []int{}
+	}
 	var primes []int
 	for _, num := range num {
 		if isPrime(num) {
@@ -53,6 +61,9 @@ func primeNumbers(num []int) []int {
 
 // oddPrimeNumbers filters out odd prime numbers from a slice of integers.
 func oddPrimeNumbers(num []int) []int {
+	if len(num) == 0 {
+		return []int{}
+	}
 	var odds []int
 	for _, num := range num {
 		if isPrime(num) && num%2 != 0 {
@@ -64,6 +75,9 @@ func oddPrimeNumbers(num []int) []int {
 
 // evenMultiplesOf5 filters out even multiples of 5 from a slice of integers.
 func evenMultiplesOf5(num []int) []int {
+	if len(num) == 0 {
+		return []int{}
+	}
 	var evens []int
 	for _, num := range num {
 		if num%2 == 0 && num%5 == 0 {
@@ -75,9 +89,12 @@ func evenMultiplesOf5(num []int) []int {
 
 // oddMultiplesOf3GreaterThan10 filters out odd multiples of 3 from a slice of integers greater than 10.
 func oddMultiplesOf3GreaterThan10(num []int) []int {
+	if len(num) == 0 {
+		return []int{}
+	}
 	var odds []int
 	for _, num := range num {
-		if num%2 != 0 && num%3 == 0 && num > 10 {	
+		if num%2 != 0 && num%3 == 0 && num > 10 {
 			odds = append(odds, num)
 		}
 	}
@@ -86,16 +103,18 @@ func oddMultiplesOf3GreaterThan10(num []int) []int {
 
 type Condition func(n int) bool
 
-func odd(n int) bool { return n%2 != 0 }
-func even(n int) bool { return !odd(n) }
-func prime(n int) bool {return isPrime(n)}
+func odd(n int) bool               { return n%2 != 0 }
+func even(n int) bool              { return !odd(n) }
+func prime(n int) bool             { return isPrime(n) }
 func greaterThanN(n int) Condition { return func(m int) bool { return m > n } }
-func multiplesOf(n int) Condition { return func(m int) bool { return m%n == 0 } }
-func lessThanN(n int) Condition { return func(m int) bool { return m < n } }
-
+func multiplesOf(n int) Condition  { return func(m int) bool { return m%n == 0 } }
+func lessThanN(n int) Condition    { return func(m int) bool { return m < n } }
 
 // andNumbers filters out numbers from a slice of integers that match all the conditions.
 func andNumbers(num []int, conditions ...Condition) []int {
+	if len(num) == 0 {
+		return []int{}
+	}
 	var filtered []int
 
 	for _, num := range num {
@@ -114,6 +133,9 @@ func andNumbers(num []int, conditions ...Condition) []int {
 
 // orNumbers filters out numbers from a slice of integers that match any of the conditions.
 func orNumbers(num []int, conditions ...Condition) []int {
+	if len(num) == 0 {
+		return []int{}
+	}
 	var filtered []int
 	for _, num := range num {
 		for _, condition := range conditions {
@@ -130,8 +152,8 @@ func orNumbers(num []int, conditions ...Condition) []int {
 func main() {
 	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 	numbersExtended := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-	fmt.Println("Even numbers:", evenNumbers(numbers))
-	fmt.Println("Odd numbers:", oddNumbers(numbers))
+	fmt.Println("Even numbers:", filterEven(numbers))
+	fmt.Println("Odd numbers:", filterOdd(numbers))
 	fmt.Println("Prime numbers:", primeNumbers(numbers))
 	fmt.Println("Odd prime numbers:", oddPrimeNumbers(numbers))
 	fmt.Println("Even multiples of 5:", evenMultiplesOf5(numbersExtended))

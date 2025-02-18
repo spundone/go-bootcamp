@@ -16,12 +16,12 @@ func TestFilter(t *testing.T) {
 	}{
 		{
 			name:     "EvenNumbers",
-			filterFn: evenNumbers,
+			filterFn: filterEven,
 			expected: []int{2, 4, 6, 8, 10},
 		},
 		{
 			name:     "OddNumbers",
-			filterFn: oddNumbers,
+			filterFn: filterOdd,
 			expected: []int{1, 3, 5, 7, 9},
 		},
 		{
