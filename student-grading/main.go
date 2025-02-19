@@ -27,6 +27,12 @@ type studentStat struct {
 	grade      Grade
 }
 
+// Implementing the Stringer interface for studentStat
+func (s studentStat) String() string {
+	return fmt.Sprintf("%s %s from %s: Final Score: %.2f, Grade: %s",
+		s.firstName, s.lastName, s.university, s.finalScore, s.grade)
+}
+
 // Sol starts here
 func parseCSV(filePath string) []student {
 	file, err := os.Open(filePath)
@@ -52,10 +58,22 @@ func parseCSV(filePath string) []student {
 		if i == 0 {
 			continue // Skip header
 		}
-		test1Score, _ := strconv.Atoi(record[3]) // Convert to int
-		test2Score, _ := strconv.Atoi(record[4]) // Convert to int
-		test3Score, _ := strconv.Atoi(record[5]) // Convert to int
-		test4Score, _ := strconv.Atoi(record[6]) // Convert to int
+		test1Score, err1 := strconv.Atoi(record[3]) // Convert to int
+		if err1 != nil {
+			fmt.Println("Error converting test1Score:", err1)
+		}
+		test2Score, err2 := strconv.Atoi(record[4]) // Convert to int
+		if err2 != nil {
+			fmt.Println("Error converting test2Score:", err2)
+		}
+		test3Score, err3 := strconv.Atoi(record[5]) // Convert to int
+		if err3 != nil {
+			fmt.Println("Error converting test3Score:", err3)
+		}
+		test4Score, err4 := strconv.Atoi(record[6]) // Convert to int
+		if err4 != nil {
+			fmt.Println("Error converting test4Score:", err4)
+		}
 
 		students = append(students, student{
 			firstName:  record[0],
@@ -73,12 +91,12 @@ func parseCSV(filePath string) []student {
 
 func calculateGrade(students []student) []studentStat {
 	gradedStudents := make([]studentStat, 0)
-	graded := F //by default it's set to F
 	for _, s := range students {
+		graded := Grade("") // Define graded as a variable of type Grade
 		totalScore := float32(s.test1Score+s.test2Score+s.test3Score+s.test4Score) / 4
 		if totalScore >= 70 {
 			graded = A
-		} else if totalScore >= 50 { //no need to define <=70 since its handled above
+		} else if totalScore >= 50 { // no need to define <=70 since its handled above
 			graded = B
 		} else if totalScore >= 35 {
 			graded = C
@@ -95,7 +113,10 @@ func calculateGrade(students []student) []studentStat {
 	return gradedStudents
 }
 
-func findOverallTopper(students []studentStat) studentStat { 
+func findOverallTopper(students []studentStat) studentStat {
+	if len(students) == 0 {
+		return studentStat{} // Return zero value if no students
+	}
 	topperO := students[0]
 
 	for _, s := range students {
@@ -108,6 +129,7 @@ func findOverallTopper(students []studentStat) studentStat {
 
 func findTopperPerUniversity(students []studentStat) map[string]studentStat {
 	topperU := make(map[string]studentStat)
+	// overallTopper := findOverallTopper(students) // Reuse findOverallTopper
 
 	for _, s := range students {
 		if _, ok := topperU[s.university]; !ok || s.finalScore > topperU[s.university].finalScore {
@@ -122,6 +144,10 @@ func main() {
 	gradedStudents := calculateGrade(students)
 	overallTopper := findOverallTopper(gradedStudents)
 	toppersPerUniversity := findTopperPerUniversity(gradedStudents)
+	// Use the Stringer implementation
 	fmt.Println("Overall Topper: ", overallTopper)
-	fmt.Println("Toppers per University: ", toppersPerUniversity)
+	fmt.Println("Toppers per University: ")
+	for _, topper := range toppersPerUniversity {
+		fmt.Println(topper) // Implicitly calls the String() method
+	}
 }
