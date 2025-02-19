@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"math/rand"
-	"os"
-	"strconv"
 )
 
 type Player struct {
@@ -53,56 +51,22 @@ func playGame(p1, p2 *Player) int {
 	}
 }
 
-// func simulateGames(p1Strategy, p2Strategy, numGames int) (int, int) {
-// 	p1 := &Player{holdStrategy: p1Strategy}
-// 	p2 := &Player{holdStrategy: p2Strategy}
-
-// 	p1Wins := 0
-// 	p2Wins := 0
-
-// 	for i := 0; i < numGames; i++ {
-// 		winner := playGame(p1, p2)
-// 		if winner == 1 {
-// 			p1Wins++
-// 		} else {
-// 			p2Wins++
-// 		}
-// 	}
-
-// 	return p1Wins, p2Wins
-// }
-
-func main() {
-	if len(os.Args) != 3 {
-		fmt.Println("Usage: ./pig <p1HoldStrategy> <p2HoldStrategy>")
-		return
-	}
-
-	p1Strategy, _ := strconv.Atoi(os.Args[1])
-	p2Strategy, _ := strconv.Atoi(os.Args[2])
-
+func simulateGames(p1Strategy, p2Strategy, numGames int) (int, int) {
 	p1 := &Player{holdStrategy: p1Strategy}
 	p2 := &Player{holdStrategy: p2Strategy}
 
 	p1Wins := 0
 	p2Wins := 0
 
-	// Simulate games until one player wins
-	for {
+	for i := 0; i < numGames; i++ {
 		winner := playGame(p1, p2)
 		if winner == 1 {
 			p1Wins++
 		} else {
 			p2Wins++
 		}
-
-		// Check if we want to stop after a certain number of wins
-		if p1Wins+p2Wins >= 10 { // Example: stop after 10 games
-			break
-		}
 	}
 
-	fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
-		p1Strategy, p2Strategy, p1Wins, p1Wins+p2Wins, float64(p1Wins)*100/float64(p1Wins+p2Wins),
-		p2Wins, p1Wins+p2Wins, float64(p2Wins)*100/float64(p1Wins+p2Wins))
+	return p1Wins, p2Wins
 }
+
