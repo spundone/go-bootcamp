@@ -23,10 +23,11 @@ type student struct {
 
 type studentStat struct {
 	student
-	totalScore float32
+	finalScore float32
 	grade      Grade
 }
 
+// Sol starts here
 func parseCSV(filePath string) []student {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -70,32 +71,27 @@ func parseCSV(filePath string) []student {
 	return students
 }
 
-
-func calculateGrade(totalScore float32) Grade {
-	if totalScore >= 90 {
-		return A
-	} else if totalScore >= 80 {
-		return B
-	} else if totalScore >= 70 {
-		return C
-	} else {
-		return F
-	}
-}
-
-func calculateGrades(students []student) []studentStat {
+func calculateGrade(students []student) []studentStat {
 	gradedStudents := make([]studentStat, 0)
-
+	grade := F //by default it's set to F
 	for _, student := range students {
 		totalScore := float32(student.test1Score+student.test2Score+student.test3Score+student.test4Score) / 4
-		grade := calculateGrade(totalScore)
+		if totalScore >= 70 {
+			grade = A
+		} else if totalScore >= 50 { //no need to define <=70
+			grade = B
+		} else if totalScore >= 35 {
+			grade = C
+		} else {
+			grade = F
+		}
+
 		gradedStudents = append(gradedStudents, studentStat{
 			student:    student,
-			totalScore: totalScore,
+			finalScore: totalScore,
 			grade:      grade,
 		})
 	}
-
 	return gradedStudents
 }
 
@@ -103,7 +99,7 @@ func findOverallTopper(students []studentStat) studentStat {
 	topper := students[0]
 
 	for _, student := range students {
-		if student.totalScore > topper.totalScore {
+		if student.finalScore > topper.finalScore {
 			topper = student
 		}
 	}
@@ -114,7 +110,7 @@ func findTopperPerUniversity(students []studentStat) map[string]studentStat {
 	toppers := make(map[string]studentStat)
 
 	for _, student := range students {
-		if _, ok := toppers[student.university]; !ok || student.totalScore > toppers[student.university].totalScore {
+		if _, ok := toppers[student.university]; !ok || student.finalScore > toppers[student.university].finalScore {
 			toppers[student.university] = student
 		}
 	}
@@ -123,10 +119,9 @@ func findTopperPerUniversity(students []studentStat) map[string]studentStat {
 
 func main() {
 	students := parseCSV("grades.csv")
-	gradedStudents := calculateGrades(students)
+	gradedStudents := calculateGrade(students)
 	overallTopper := findOverallTopper(gradedStudents)
 	toppersPerUniversity := findTopperPerUniversity(gradedStudents)
-
 	fmt.Println("Overall Topper: ", overallTopper)
 	fmt.Println("Toppers per University: ", toppersPerUniversity)
 }
