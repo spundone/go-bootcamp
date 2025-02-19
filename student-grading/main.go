@@ -119,11 +119,13 @@ func findOverallTopper(students []studentStat) studentStat {
 	if len(students) == 0 {
 		return studentStat{} // Return zero value if no students
 	}
-	topperO := students[0]
-
-	for _, s := range students {
-		if s.finalScore > topperO.finalScore {
-			topperO = s
+	// Reuse findTopperPerUniversity to get the overall topper
+	toppers := findTopperPerUniversity(students)
+	// Assuming we want the overall topper from the map
+	var topperO studentStat
+	for _, t := range toppers {
+		if topperO.finalScore < t.finalScore {
+			topperO = t
 		}
 	}
 	return topperO
@@ -131,7 +133,6 @@ func findOverallTopper(students []studentStat) studentStat {
 
 func findTopperPerUniversity(students []studentStat) map[string]studentStat {
 	topperU := make(map[string]studentStat)
-	// overallTopper := findOverallTopper(students) // Reuse findOverallTopper
 
 	for _, s := range students {
 		if _, ok := topperU[s.university]; !ok || s.finalScore > topperU[s.university].finalScore {
