@@ -58,32 +58,30 @@ func parseCSV(filePath string) []student {
 		if i == 0 {
 			continue // Skip header
 		}
-		test1Score, err1 := strconv.Atoi(record[3]) // Convert to int
-		if err1 != nil {
-			fmt.Println("Error converting test1Score:", err1)
-		}
-		test2Score, err2 := strconv.Atoi(record[4]) // Convert to int
-		if err2 != nil {
-			fmt.Println("Error converting test2Score:", err2)
-		}
-		test3Score, err3 := strconv.Atoi(record[5]) // Convert to int
-		if err3 != nil {
-			fmt.Println("Error converting test3Score:", err3)
-		}
-		test4Score, err4 := strconv.Atoi(record[6]) // Convert to int
-		if err4 != nil {
-			fmt.Println("Error converting test4Score:", err4)
-		}
+		var s student
+		s.firstName = record[0]
+		s.lastName = record[1]
+		s.university = record[2]
 
-		students = append(students, student{
-			firstName:  record[0],
-			lastName:   record[1],
-			university: record[2],
-			test1Score: test1Score,
-			test2Score: test2Score,
-			test3Score: test3Score,
-			test4Score: test4Score,
-		})
+		// Convert scores and handle errors
+		for j := 3; j <= 6; j++ {
+			score, err := strconv.Atoi(record[j])
+			if err != nil {
+				fmt.Printf("error converting score for %s %s: ", s.firstName, s.lastName)
+				continue
+			}
+			switch j {
+			case 3:
+				s.test1Score = score
+			case 4:
+				s.test2Score = score
+			case 5:
+				s.test3Score = score
+			case 6:
+				s.test4Score = score
+			}
+		}
+		students = append(students, s)
 	}
 
 	return students
@@ -92,8 +90,8 @@ func parseCSV(filePath string) []student {
 func calculateGrade(students []student) []studentStat {
 	gradedStudents := make([]studentStat, 0)
 	for _, s := range students {
-		var graded Grade // Define graded as a variable of type Grade
 		totalScore := float32(s.test1Score+s.test2Score+s.test3Score+s.test4Score) / 4
+		var graded Grade
 
 		switch {
 		case totalScore >= 70:
