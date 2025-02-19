@@ -92,15 +92,17 @@ func parseCSV(filePath string) []student {
 func calculateGrade(students []student) []studentStat {
 	gradedStudents := make([]studentStat, 0)
 	for _, s := range students {
-		graded := Grade("") // Define graded as a variable of type Grade
+		var graded Grade // Define graded as a variable of type Grade
 		totalScore := float32(s.test1Score+s.test2Score+s.test3Score+s.test4Score) / 4
-		if totalScore >= 70 {
+
+		switch {
+		case totalScore >= 70:
 			graded = A
-		} else if totalScore >= 50 { // no need to define <=70 since its handled above
+		case totalScore >= 50:
 			graded = B
-		} else if totalScore >= 35 {
+		case totalScore >= 35:
 			graded = C
-		} else {
+		default:
 			graded = F
 		}
 
