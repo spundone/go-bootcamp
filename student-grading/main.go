@@ -62,7 +62,6 @@ func parseCSV(filePath string) []student {
 		s.firstName = record[0]
 		s.lastName = record[1]
 		s.university = record[2]
-
 		// Convert scores and handle errors
 		for j := 3; j <= 6; j++ {
 			score, err := strconv.Atoi(record[j])
@@ -70,7 +69,7 @@ func parseCSV(filePath string) []student {
 				fmt.Printf("error converting score for %s %s: ", s.firstName, s.lastName)
 				continue
 			}
-			switch j {
+			switch j { // seems weird but works
 			case 3:
 				s.test1Score = score
 			case 4:
@@ -92,7 +91,6 @@ func calculateGrade(students []student) []studentStat {
 	for _, s := range students {
 		totalScore := float32(s.test1Score+s.test2Score+s.test3Score+s.test4Score) / 4
 		var graded Grade
-
 		switch {
 		case totalScore >= 70:
 			graded = A
