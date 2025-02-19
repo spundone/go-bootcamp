@@ -73,48 +73,48 @@ func parseCSV(filePath string) []student {
 
 func calculateGrade(students []student) []studentStat {
 	gradedStudents := make([]studentStat, 0)
-	grade := F //by default it's set to F
-	for _, student := range students {
-		totalScore := float32(student.test1Score+student.test2Score+student.test3Score+student.test4Score) / 4
+	graded := F //by default it's set to F
+	for _, s := range students {
+		totalScore := float32(s.test1Score+s.test2Score+s.test3Score+s.test4Score) / 4
 		if totalScore >= 70 {
-			grade = A
-		} else if totalScore >= 50 { //no need to define <=70
-			grade = B
+			graded = A
+		} else if totalScore >= 50 { //no need to define <=70 since its handled above
+			graded = B
 		} else if totalScore >= 35 {
-			grade = C
+			graded = C
 		} else {
-			grade = F
+			graded = F
 		}
 
 		gradedStudents = append(gradedStudents, studentStat{
-			student:    student,
+			student:    s,
 			finalScore: totalScore,
-			grade:      grade,
+			grade:      graded,
 		})
 	}
 	return gradedStudents
 }
 
-func findOverallTopper(students []studentStat) studentStat {
-	topper := students[0]
+func findOverallTopper(students []studentStat) studentStat { 
+	topperO := students[0]
 
-	for _, student := range students {
-		if student.finalScore > topper.finalScore {
-			topper = student
+	for _, s := range students {
+		if s.finalScore > topperO.finalScore {
+			topperO = s
 		}
 	}
-	return topper
+	return topperO
 }
 
 func findTopperPerUniversity(students []studentStat) map[string]studentStat {
-	toppers := make(map[string]studentStat)
+	topperU := make(map[string]studentStat)
 
-	for _, student := range students {
-		if _, ok := toppers[student.university]; !ok || student.finalScore > toppers[student.university].finalScore {
-			toppers[student.university] = student
+	for _, s := range students {
+		if _, ok := topperU[s.university]; !ok || s.finalScore > topperU[s.university].finalScore {
+			topperU[s.university] = s
 		}
 	}
-	return toppers
+	return topperU
 }
 
 func main() {
