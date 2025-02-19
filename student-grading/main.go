@@ -19,12 +19,11 @@ const (
 type student struct {
 	firstName, lastName, university                string
 	test1Score, test2Score, test3Score, test4Score int
-	
 }
 
 type studentStat struct {
 	student
-	finalScore float32
+	totalScore float32
 	grade      Grade
 }
 
@@ -47,30 +46,52 @@ func parseCSV(filePath string) []student {
 
 	students := make([]student, 0)
 
-	for _, record := range records {
+	// Skip the header row
+	for i, record := range records {
+		if i == 0 {
+			continue // Skip header
+		}
+		test1Score, _ := strconv.Atoi(record[3]) // Convert to int
+		test2Score, _ := strconv.Atoi(record[4]) // Convert to int
+		test3Score, _ := strconv.Atoi(record[5]) // Convert to int
+		test4Score, _ := strconv.Atoi(record[6]) // Convert to int
+
 		students = append(students, student{
-			firstName: record[0],
-			lastName:  record[1],
+			firstName:  record[0],
+			lastName:   record[1],
 			university: record[2],
-			test1Score: strconv.Atoi(record[3]),
-			test2Score: strconv.Atoi(record[4]),
-			test3Score: strconv.Atoi(record[5]),
-			test4Score: strconv.Atoi(record[6]),
+			test1Score: test1Score,
+			test2Score: test2Score,
+			test3Score: test3Score,
+			test4Score: test4Score,
 		})
 	}
 
 	return students
 }
 
-func calculateGrade(students []student) []studentStat {
+
+func calculateGrade(totalScore float32) Grade {
+	if totalScore >= 90 {
+		return A
+	} else if totalScore >= 80 {
+		return B
+	} else if totalScore >= 70 {
+		return C
+	} else {
+		return F
+	}
+}
+
+func calculateGrades(students []student) []studentStat {
 	gradedStudents := make([]studentStat, 0)
 
 	for _, student := range students {
-		finalScore := float32(student.test1Score + student.test2Score + student.test3Score + student.test4Score) / 4
-		grade := calculateGrade(finalScore)
+		totalScore := float32(student.test1Score+student.test2Score+student.test3Score+student.test4Score) / 4
+		grade := calculateGrade(totalScore)
 		gradedStudents = append(gradedStudents, studentStat{
 			student:    student,
-			finalScore: finalScore,
+			totalScore: totalScore,
 			grade:      grade,
 		})
 	}
@@ -78,10 +99,34 @@ func calculateGrade(students []student) []studentStat {
 	return gradedStudents
 }
 
-func findOverallTopper(gradedStudents []studentStat) studentStat {
-	return studentStat{}
+func findOverallTopper(students []studentStat) studentStat {
+	topper := students[0]
+
+	for _, student := range students {
+		if student.totalScore > topper.totalScore {
+			topper = student
+		}
+	}
+	return topper
 }
 
-func findTopperPerUniversity(gs []studentStat) map[string]studentStat {
-	return nil
+func findTopperPerUniversity(students []studentStat) map[string]studentStat {
+	toppers := make(map[string]studentStat)
+
+	for _, student := range students {
+		if _, ok := toppers[student.university]; !ok || student.totalScore > toppers[student.university].totalScore {
+			toppers[student.university] = student
+		}
+	}
+	return toppers
+}
+
+func main() {
+	students := parseCSV("grades.csv")
+	gradedStudents := calculateGrades(students)
+	overallTopper := findOverallTopper(gradedStudents)
+	toppersPerUniversity := findTopperPerUniversity(gradedStudents)
+
+	fmt.Println("Overall Topper: ", overallTopper)
+	fmt.Println("Toppers per University: ", toppersPerUniversity)
 }
