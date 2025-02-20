@@ -63,23 +63,20 @@ func parseCSV(filePath string) []student {
 		s.lastName = record[1]
 		s.university = record[2]
 		// Convert scores and handle errors
+		scores := make([]int, 4) // Create a slice to hold the scores
 		for j := 3; j <= 6; j++ {
 			score, err := strconv.Atoi(record[j])
 			if err != nil {
 				fmt.Printf("error converting score for %s %s: ", s.firstName, s.lastName)
 				continue
 			}
-			switch j { // seems weird but works
-			case 3:
-				s.test1Score = score
-			case 4:
-				s.test2Score = score
-			case 5:
-				s.test3Score = score
-			case 6:
-				s.test4Score = score
-			}
+			scores[j-3] = score // Store score in the slice
 		}
+		// Assign scores from the slice to the student struct
+		s.test1Score = scores[0]
+		s.test2Score = scores[1]
+		s.test3Score = scores[2]
+		s.test4Score = scores[3]
 		students = append(students, s)
 	}
 
