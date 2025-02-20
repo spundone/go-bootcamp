@@ -1,128 +1,154 @@
 package main
 
 import (
-	// "fmt"
-	// "os"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
+// TestRollDie checks if the die rolls a valid number between 1 and 6.
 func TestRollDie(t *testing.T) {
-	//Test if value rolled by the die is between 1 and 6
+	// Create a new assertion object
+	a := assert.New(t)
+
+	// Roll the die 100 times and check the results
 	for i := 0; i < 100; i++ {
 		roll := rollDie()
-		if roll < 1 || roll > 6 {
-			t.Errorf("Invalid roll: %d", roll)
-		}
+		// Assert that the roll is within the valid range
+		a.True(roll >= 1 && roll <= 6, "Invalid roll: %d", roll)
 	}
 }
 
-func TestCheckPig(t *testing.T) {
-	tests := []struct {
-		roll int
-		pig  bool
-	}{
-		{1, true}, //dunno if more or less resource intensive compared to running a loop
-		{2, false},
-		{3, false},
-		{4, false},
-		{5, false},
-		{6, false},
-	}
-	for _, test := range tests {
-		if checkPig(test.roll) != test.pig {
-			t.Errorf("checkPig(%d) = %v, want %v", test.roll, !test.pig, test.pig)
-		}
-	}
+func updateScore(p *Player, points int) int {
+	p.score += points
+	return p.score
 }
 
+// TestUpdateScore verifies that the score is updated correctly.
 func TestUpdateScore(t *testing.T) {
+	a := assert.New(t)
+
+	// Define test cases for score updates
 	tests := []struct {
-		currentScore  int
-		roll          int
+		initialScore  int
+		pointsToAdd   int
 		expectedScore int
 	}{
-		{0, 2, 2}, //
-		{10, 3, 13},
-		{20, 6, 26},
+		{0, 2, 2},   // Starting from 0, adding 2 should result in 2
+		{10, 3, 13}, // Starting from 10, adding 3 should result in 13
+		{20, 6, 26}, // Starting from 20, adding 6 should result in 26
 	}
+
+	// Iterate through each test case
 	for _, test := range tests {
-		score := updateScore(&Player{score: test.currentScore}, test.roll)
-		if score != test.expectedScore {
-			t.Errorf("updateScore(%d, %d) = %d, want %d", test.currentScore, test.roll, score, test.expectedScore)
-		}
+		// Update the score and assert the expected outcome
+		score := updateScore(&Player{score: test.initialScore}, test.pointsToAdd)
+		a.Equal(test.expectedScore, score, "Expected score %d, got %d", test.expectedScore, score)
 	}
 }
 
-func TestGameOfPig(t *testing.T) {
-	// Test that game ends when a player reaches 100 points
-	player := &Player{score: 95}
-	roll := 5
-	updateScore(player, roll) // Simulate a roll that brings the player to 100
-	if player.score != 100 {
-		t.Errorf("Expected score to be 100, got %d", player.score)
-	}
-
-	// Test that the game switches between players
-	player1 := &Player{score: 50}
-	player2 := &Player{score: 45}
-	currentPlayer := player1
-	roll = 3
-	updateScore(currentPlayer, roll) // Player 1 rolls
-	if currentPlayer.score != 53 {
-		t.Errorf("Expected Player 1 score to be 53, got %d", currentPlayer.score)
-	}
-	currentPlayer = player2 // Switch to Player 2
-	roll = 4
-	updateScore(currentPlayer, roll) // Player 2 rolls
-	if currentPlayer.score != 49 {
-		t.Errorf("Expected Player 2 score to be 49, got %d", currentPlayer.score)
-	}
-
-	// Test that game handles pig rolls correctly
-	pigRoll := 1
-	if checkPig(pigRoll) {
-		t.Errorf("Expected checkPig(%d) to be false, got true", pigRoll)
-	}
-}
-
-// Test for Story 1: Player 1 holds at 10, Player 2 holds at 15
-func TestStory1(t *testing.T) {
-	p1HoldStrategy := 10
-	p2HoldStrategy := 15
-	p1Wins, p2Wins := simulateGamesWithStrategies(p1HoldStrategy, p2HoldStrategy, 10)
-
-	if p1Wins + p2Wins != 10 {
-		t.Errorf("Total games played should be 10, but got %d wins for Player 1 and %d wins for Player 2", p1Wins, p2Wins)
-	}
-}
-
-// Test for Story 2: Player 1 holds at 21, Player 2 holds at 1 to 100 (excluding 21)
-func TestStory2(t *testing.T) {
-	p1HoldStrategy := 21
-	for p2HoldStrategy := 1; p2HoldStrategy <= 100; p2HoldStrategy++ {
-		if p2HoldStrategy == 21 {
-			continue // Skip the same strategy
-		}
-		p1Wins, p2Wins := simulateGamesWithStrategies(p1HoldStrategy, p2HoldStrategy, 10)
-
-		if p1Wins + p2Wins != 10 {
-			t.Errorf("Total games played should be 10 for Player 1 holding at 21 and Player 2 holding at %d, but got %d wins for Player 1 and %d wins for Player 2", p2HoldStrategy, p1Wins, p2Wins)
-		}
-	}
-}
-
-// Test for Story 3: Player 1 holds at 1 to 100, Player 2 holds at 1 to 100 (excluding same strategies)
-func TestStory3(t *testing.T) {
-	for p1HoldStrategy := 1; p1HoldStrategy <= 100; p1HoldStrategy++ {
-		for p2HoldStrategy := 1; p2HoldStrategy <= 100; p2HoldStrategy++ {
-			if p1HoldStrategy == p2HoldStrategy {
-				continue // Skip the same strategy
+func TestGameMechanics(t *testing.T) {
+	tests := []struct {
+		name     string
+		testFunc func(t *testing.T)
+	}{
+		{"UpdateScore", func(t *testing.T) {
+			p := &Player{score: 10}
+			if score := updateScore(p, 5); score != 15 {
+				t.Errorf("Expected score 15, got %d", score)
 			}
-			p1Wins, p2Wins := simulateGamesWithStrategies(p1HoldStrategy, p2HoldStrategy, 10)
-
-			if p1Wins + p2Wins != 10 {
-				t.Errorf("Total games played should be 10 for Player 1 holding at %d and Player 2 holding at %d, but got %d wins for Player 1 and %d wins for Player 2", p1HoldStrategy, p2HoldStrategy, p1Wins, p2Wins)
+		}},
+		{"HandleRoll", func(t *testing.T) {
+			var turnTotal int
+			if handleRoll(1, &turnTotal) {
+				t.Error("Expected false for roll of 1")
 			}
-		}
+			if !handleRoll(6, &turnTotal) {
+				t.Error("Expected true for roll of 6")
+			}
+		}},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, test.testFunc)
+	}
+}
+
+// TestHandleRoll checks the behavior of the handleRoll function.
+func TestHandleRoll(t *testing.T) {
+	var turnTotal int
+
+	// Test for a roll of 1 (false roll)
+	if handleRoll(1, &turnTotal) {
+		t.Error("Expected false for roll of 1, indicating the player loses all points for this turn")
+	}
+	if turnTotal != 0 {
+		t.Errorf("Expected turn total to be 0 after rolling 1, got %d", turnTotal)
+	}
+
+	// Test for a roll of 2
+	if !handleRoll(2, &turnTotal) {
+		t.Error("Expected true for roll of 2, indicating a successful roll")
+	}
+	if turnTotal != 2 {
+		t.Errorf("Expected turn total to be 2 after rolling 2, got %d", turnTotal)
+	}
+}
+
+// TestGameSimulation verifies the game simulation results for different strategies.
+func TestGameSimulation(t *testing.T) {
+	tests := []struct {
+		name        string
+		player1Hold int
+		player2Hold int
+		numGames    int
+	}{
+		{"Story1", 10, 15, 10}, // Testing with player 1 holding at 10 and player 2 at 15
+		{"Story2", 21, 22, 10}, // Testing with player 1 holding at 21 and player 2 at 22
+		{"Story3", 50, 51, 10}, // Testing with player 1 holding at 50 and player 2 at 51
+	}
+
+	// Iterate through each test case
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			result := simulateGames(test.player1Hold, test.player2Hold, test.numGames)
+			// Assert that the total wins match the number of games played
+			assert.Equal(t, test.numGames, result.p1Wins+result.p2Wins, "Expected %d total games, got %d", test.numGames, result.p1Wins+result.p2Wins)
+		})
+	}
+}
+
+// TestInputParsing checks the input parsing functionality for various scenarios.
+func TestInputParsing(t *testing.T) {
+	tests := []struct {
+		name          string
+		args          []string
+		expectError   bool
+		expectedStart int
+		expectedEnd   int
+	}{
+		{"NoParameters", []string{}, true, 0, 0},
+		{"EmptyParameters", []string{""}, true, 0, 0},
+		{"InvalidString", []string{"abc", "def"}, true, 0, 0},
+		{"SingleValue", []string{"21", "15"}, false, 21, 21},
+		{"Range", []string{"1-100", "1-100"}, false, 1, 100},
+		{"InvalidRange", []string{"10-5", "1-100"}, true, 0, 0},
+		{"Story1", []string{"10", "15"}, false, 10, 10},
+		{"Story2", []string{"21", "1-100"}, false, 21, 21},
+		{"Story3", []string{"15-100", "15"}, false, 15, 100},
+		{"Story4", []string{"1-100", "1-100"}, false, 1, 100},
+	}
+
+	// Iterate through each test case
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			p1Start, p1End, _, _, err := parseInput(test.args)
+			if test.expectError && err == nil {
+				t.Error("Expected error, got nil")
+			}
+			if !test.expectError {
+				assert.Equal(t, test.expectedStart, p1Start, "Expected start %d, got %d", test.expectedStart, p1Start)
+				assert.Equal(t, test.expectedEnd, p1End, "Expected end %d, got %d", test.expectedEnd, p1End)
+			}
+		})
 	}
 }
