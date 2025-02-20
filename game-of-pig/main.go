@@ -46,6 +46,17 @@ func playTurn(p *Player) int {
 	}
 }
 
+// Helper function to validate hold strategies
+func validateHoldStrategies(p1HoldNum, p2HoldNum int) error {
+	if p1HoldNum <= 0 || p2HoldNum <= 0 {
+		return fmt.Errorf("hold strategies must be greater than 0")
+	}
+	if p1HoldNum > 100 || p2HoldNum > 100 {
+		return fmt.Errorf("hold strategies must not exceed 100")
+	}
+	return nil
+}
+
 // playGame simulates a complete game between two players
 func playGame(p1, p2 *Player) int {
 	p1.score = 0
@@ -68,8 +79,8 @@ func playGame(p1, p2 *Player) int {
 
 // Simulates n no of games with holding strategy mentioned
 func simulateGames(p1HoldNum, p2HoldNum int, numGames int) (GameResult, error) {
-	if p1HoldNum <= 0 || p2HoldNum <= 0 {
-		return GameResult{}, fmt.Errorf("hold strategies must be greater than 0")
+	if err := validateHoldStrategies(p1HoldNum, p2HoldNum); err != nil {
+		return GameResult{}, err
 	}
 
 	p1 := &Player{holdStrategy: p1HoldNum}
