@@ -16,9 +16,16 @@ type Player struct {
 func rollDie() int {
 	return rand.Intn(6) + 1
 }
+
 // test die that always rolls 1
 func checkPig(roll int) bool {
 	return roll == 1
+}
+
+// Update the player's score by adding the rolled points
+func updateScore(p *Player, points int) int {
+	p.score += points
+	return p.score
 }
 
 func playTurn(p *Player) int {
