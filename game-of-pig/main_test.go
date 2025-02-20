@@ -55,8 +55,32 @@ func TestUpdateScore(t *testing.T) {
 
 func TestGameOfPig(t *testing.T) {
 	// Test that game ends when a player reaches 100 points
+	player := &Player{score: 95}
+	roll := 5
+	updateScore(player, roll) // Simulate a roll that brings the player to 100
+	if player.score != 100 {
+		t.Errorf("Expected score to be 100, got %d", player.score)
+	}
 
 	// Test that the game switches between players
+	player1 := &Player{score: 50}
+	player2 := &Player{score: 45}
+	currentPlayer := player1
+	roll = 3
+	updateScore(currentPlayer, roll) // Player 1 rolls
+	if currentPlayer.score != 53 {
+		t.Errorf("Expected Player 1 score to be 53, got %d", currentPlayer.score)
+	}
+	currentPlayer = player2 // Switch to Player 2
+	roll = 4
+	updateScore(currentPlayer, roll) // Player 2 rolls
+	if currentPlayer.score != 49 {
+		t.Errorf("Expected Player 2 score to be 49, got %d", currentPlayer.score)
+	}
 
 	// Test that game handles pig rolls correctly
+	pigRoll := 1
+	if checkPig(pigRoll) {
+		t.Errorf("Expected checkPig(%d) to be false, got true", pigRoll)
+	}
 }

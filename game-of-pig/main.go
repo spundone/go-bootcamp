@@ -28,16 +28,24 @@ func updateScore(p *Player, points int) int {
 	return p.score
 }
 
+// Function to handle a single roll and its result
+func handleRoll(roll int, turnTotal *int) bool {
+	if roll == 1 {
+		return false // Indicates that the player loses all points for this turn
+	}
+	*turnTotal += roll
+	return true // Indicates a successful roll
+}
+
 func playTurn(p *Player) int {
 	turnTotal := 0
 
 	for {
 		roll := rollDie()
-		if roll == 1 {
+		if !handleRoll(roll, &turnTotal) {
 			return 0 // Player loses all points for this turn
 		}
 
-		turnTotal += roll
 		if turnTotal >= p.holdStrategy {
 			return turnTotal
 		}
