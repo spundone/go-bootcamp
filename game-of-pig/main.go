@@ -1,8 +1,10 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"math/rand"
+	"os"
+	"strconv"
 )
 
 type Player struct {
@@ -14,6 +16,10 @@ type Player struct {
 func rollDie() int {
 	return rand.Intn(6) + 1
 }
+// test die that always rolls 1
+func checkPig(roll int) bool {
+	return roll == 1
+}
 
 func playTurn(p *Player) int {
 	turnTotal := 0
@@ -21,7 +27,7 @@ func playTurn(p *Player) int {
 	for {
 		roll := rollDie()
 		if roll == 1 {
-			return 0
+			return 0 // Player loses all points for this turn
 		}
 
 		turnTotal += roll
@@ -51,14 +57,12 @@ func playGame(p1, p2 *Player) int {
 	}
 }
 
-func simulateGames(p1Strategy, p2Strategy, numGames int) (int, int) {
-	p1 := &Player{holdStrategy: p1Strategy}
-	p2 := &Player{holdStrategy: p2Strategy}
-
+// New function to play the game n times and return the results
+func simulateGames(p1, p2 *Player, n int) (int, int) {
 	p1Wins := 0
 	p2Wins := 0
 
-	for i := 0; i < numGames; i++ {
+	for i := 0; i < n; i++ {
 		winner := playGame(p1, p2)
 		if winner == 1 {
 			p1Wins++
@@ -66,7 +70,17 @@ func simulateGames(p1Strategy, p2Strategy, numGames int) (int, int) {
 			p2Wins++
 		}
 	}
-
 	return p1Wins, p2Wins
 }
 
+func main() {
+	// Parse the arguments here and pass them to simulateGames()
+	p1HoldStrategy, _ := strconv.Atoi(os.Args[1]) // Convert to int
+	p2HoldStrategy, _ := strconv.Atoi(os.Args[2]) // Convert to int
+
+	p1 := &Player{holdStrategy: p1HoldStrategy}
+	p2 := &Player{holdStrategy: p2HoldStrategy}
+
+	p1Wins, p2Wins := simulateGames(p1, p2, 1000) // Simulate 1000 games
+	fmt.Printf("Player 1 wins: %d, Player 2 wins: %d\n", p1Wins, p2Wins)
+}
