@@ -152,3 +152,26 @@ func TestInputParsing(t *testing.T) {
 		})
 	}
 }
+
+// TestHoldingAtInvalidValues checks that holding strategies greater than 100 are not allowed.
+func TestHoldingAtInvalidValues(t *testing.T) {
+	tests := []struct {
+		name        string
+		p1Hold      int
+		p2Hold      int
+		expectError bool
+	}{
+		{"HoldAt101", 101, 50, true},
+		{"HoldAt150", 150, 100, true},
+		{"HoldAt0", 0, 50, true},
+		{"HoldAtNegative", -10, 50, true},
+		{"ValidHold", 50, 50, false},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			_, err := simulateGames(test.p1Hold, test.p2Hold, 10)
+			assert.Equal(t, test.expectError, err != nil)
+		})
+	}
+}
