@@ -67,7 +67,11 @@ func playGame(p1, p2 *Player) int {
 }
 
 // Simulates n no of games with holding strategy mentioned
-func simulateGames(p1HoldNum, p2HoldNum int, numGames int) GameResult {
+func simulateGames(p1HoldNum, p2HoldNum int, numGames int) (GameResult, error) {
+	if p1HoldNum <= 0 || p2HoldNum <= 0 {
+		return GameResult{}, fmt.Errorf("hold strategies must be greater than 0")
+	}
+
 	p1 := &Player{holdStrategy: p1HoldNum}
 	p2 := &Player{holdStrategy: p2HoldNum}
 	result := GameResult{games: numGames}
@@ -79,12 +83,16 @@ func simulateGames(p1HoldNum, p2HoldNum int, numGames int) GameResult {
 			result.p2Wins++
 		}
 	}
-	return result
+	return result, nil
 }
 
 // Simulates a game with fixed hold strategies for both players
 func fixedHold(hold1, hold2 int) {
-	result := simulateGames(hold1, hold2, 10)
+	result, err := simulateGames(hold1, hold2, 10)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 	fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
 		hold1, hold2, result.p1Wins, result.games,
 		float64(result.p1Wins)/float64(result.games)*100,
@@ -100,7 +108,7 @@ func rangeHold1(fixedHold, rangeStart, rangeEnd int, rangeIsFirst bool) {
 		}
 		var result GameResult
 		if rangeIsFirst {
-			result = simulateGames(hold, fixedHold, 10)
+			result, _ = simulateGames(hold, fixedHold, 10)
 			fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
 				hold, fixedHold,
 				result.p1Wins, result.games,
@@ -108,7 +116,7 @@ func rangeHold1(fixedHold, rangeStart, rangeEnd int, rangeIsFirst bool) {
 				result.p2Wins, result.games,
 				float64(result.p2Wins)/float64(result.games)*100)
 		} else {
-			result = simulateGames(fixedHold, hold, 10)
+			result, _ = simulateGames(fixedHold, hold, 10)
 			fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
 				fixedHold, hold,
 				result.p1Wins, result.games,
@@ -128,7 +136,7 @@ func rangeHold2(range1Start, range1End, range2Start, range2End int) {
 			if hold2 == hold1 {
 				continue // Skip when hold strategies are the same
 			}
-			result := simulateGames(hold1, hold2, 10)
+			result, _ := simulateGames(hold1, hold2, 10)
 			totalWins += result.p1Wins
 			totalGames += result.games
 		}

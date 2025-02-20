@@ -110,7 +110,7 @@ func TestGameSimulation(t *testing.T) {
 	// Iterate through each test case
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			result := simulateGames(test.player1Hold, test.player2Hold, test.numGames)
+			result, _ := simulateGames(test.player1Hold, test.player2Hold, test.numGames)
 			// Assert that the total wins match the number of games played
 			assert.Equal(t, test.numGames, result.p1Wins+result.p2Wins, "Expected %d total games, got %d", test.numGames, result.p1Wins+result.p2Wins)
 		})
