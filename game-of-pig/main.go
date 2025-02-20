@@ -82,47 +82,61 @@ func simulateGames(p1HoldNum, p2HoldNum int, numGames int) GameResult {
 	return result
 }
 
-// Will run story 1 with 2 int parameters passed
-func runStory1(p1HoldNum, p2HoldNum int) {
-	result := simulateGames(p1HoldNum, p2HoldNum, 10)
+// Simulates a game with fixed hold strategies for both players
+func fixedHold(hold1, hold2 int) {
+	result := simulateGames(hold1, hold2, 10)
 	fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
-		p1HoldNum, p2HoldNum, result.p1Wins, result.games,
+		hold1, hold2, result.p1Wins, result.games,
 		float64(result.p1Wins)/float64(result.games)*100,
 		result.p2Wins, result.games,
 		float64(result.p2Wins)/float64(result.games)*100)
 }
 
-// Will run story 2 with 1 int and 1 range parameter passed
-func runStory2(p1HoldNum, p2HoldRangeStart, p2HoldRangeEnd int) {
-	for k := p2HoldRangeStart; k <= p2HoldRangeEnd; k++ {
-		if k == p1HoldNum {
-			continue // Skips in case same holding strategy
+// Simulates games with one fixed hold and one range hold
+func rangeHold1(fixedHold, rangeStart, rangeEnd int, rangeIsFirst bool) {
+	for hold := rangeStart; hold <= rangeEnd; hold++ {
+		if hold == fixedHold {
+			continue // Skip when hold strategies are the same
 		}
-		result := simulateGames(p1HoldNum, k, 10)
-		fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
-			p1HoldNum, k, result.p1Wins, result.games,
-			float64(result.p1Wins)/float64(result.games)*100,
-			result.p2Wins, result.games,
-			float64(result.p2Wins)/float64(result.games)*100)
+		var result GameResult
+		if rangeIsFirst {
+			result = simulateGames(hold, fixedHold, 10)
+			fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
+				hold, fixedHold,
+				result.p1Wins, result.games,
+				float64(result.p1Wins)/float64(result.games)*100,
+				result.p2Wins, result.games,
+				float64(result.p2Wins)/float64(result.games)*100)
+		} else {
+			result = simulateGames(fixedHold, hold, 10)
+			fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
+				fixedHold, hold,
+				result.p1Wins, result.games,
+				float64(result.p1Wins)/float64(result.games)*100,
+				result.p2Wins, result.games,
+				float64(result.p2Wins)/float64(result.games)*100)
+		}
 	}
 }
 
-// Will run story 3 in case both parameters are range
-func runStory3(p1HoldRangeStart, p1HoldRangeEnd, p2HoldRangeStart, p2HoldRangeEnd int) {
-	for k := p1HoldRangeStart; k <= p1HoldRangeEnd; k++ {
+// Simulates games with both players using range holds
+func rangeHold2(range1Start, range1End, range2Start, range2End int) {
+	for hold1 := range1Start; hold1 <= range1End; hold1++ {
 		totalWins := 0
-		totalLosses := 0
-		for j := p2HoldRangeStart; j <= p2HoldRangeEnd; j++ {
-			if j == k {
-				continue // Skips in case holding same value
+		totalGames := 0
+		for hold2 := range2Start; hold2 <= range2End; hold2++ {
+			if hold2 == hold1 {
+				continue // Skip when hold strategies are the same
 			}
-			result := simulateGames(k, j, 10)
+			result := simulateGames(hold1, hold2, 10)
 			totalWins += result.p1Wins
-			totalLosses += result.p2Wins
+			totalGames += result.games
 		}
-		fmt.Printf("Result: Wins, losses staying at k = %d: %d/990 (%.1f%%), %d/990 (%.1f%%)\n",
-			k, totalWins, float64(totalWins)/990*100,// hardcoded to be fixed
-			totalLosses, float64(totalLosses)/990*100)
+		fmt.Printf("Result: Wins, losses staying at hold = %d: %d/%d (%.1f%%), %d/%d (%.1f%%)\n",
+			hold1, totalWins, totalGames,
+			float64(totalWins)/float64(totalGames)*100,
+			totalGames-totalWins, totalGames,
+			float64(totalGames-totalWins)/float64(totalGames)*100)
 	}
 }
 
@@ -177,12 +191,14 @@ func main() {
 		return
 	}
 
-	// Determine which story to run based on input
+	// Determine which func to run based on input
 	if p1End == p1Start && p2End == p2Start {
-		runStory1(p1Start, p2Start)
+		fixedHold(p1Start, p2Start)
+	} else if p1End > p1Start && p2End == p2Start {
+		rangeHold1(p2Start, p1Start, p1End, true) // First player uses range
 	} else if p1End == p1Start && p2End > p2Start {
-		runStory2(p1Start, p2Start, p2End)
+		rangeHold1(p1Start, p2Start, p2End, false) // Second player uses range
 	} else if p1End > p1Start && p2End > p2Start {
-		runStory3(p1Start, p1End, p2Start, p2End)
+		rangeHold2(p1Start, p1End, p2Start, p2End)
 	}
 }
