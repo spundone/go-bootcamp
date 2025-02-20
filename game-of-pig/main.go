@@ -107,17 +107,82 @@ func main() {
 		return
 	}
 
-	// Convert to int and check for valid values
-	p1HoldStrategy, err1 := strconv.Atoi(strings.TrimSpace(p1HoldStrategyStr))
-	p2HoldStrategy, err2 := strconv.Atoi(strings.TrimSpace(p2HoldStrategyStr))
+	// Parse hold strategy ranges or single values
+	p1HoldRange := strings.Split(p1HoldStrategyStr, "-")
+	p2HoldRange := strings.Split(p2HoldStrategyStr, "-")
 
-	if err1 != nil || err2 != nil || p1HoldStrategy <= 0 || p2HoldStrategy <= 0 {
-	 	fmt.Println("Hold strategies must be positive integers greater than 0.")
-	 	return
+	var p1Start, p1End, p2Start, p2End int
+	var err1, err2 error
+
+	if len(p1HoldRange) == 1 {
+		p1Start, err1 = strconv.Atoi(strings.TrimSpace(p1HoldRange[0]))
+		p1End = p1Start // Single value, so start and end are the same
+	} else {
+		p1Start, p1End, err1 = parseHoldRange(p1HoldRange)
 	}
 
-	// Simulate 10 games between the two players
-	p1Wins, p2Wins := simulateGamesWithStrategies(p1HoldStrategy, p2HoldStrategy, 10) // Simulate 10 games
-	fmt.Printf("Holding at %d vs Holding at %d: wins: %d/10 (%.1f%%), losses: %d/10 (%.1f%%)\n",
-		p1HoldStrategy, p2HoldStrategy, p1Wins, float64(p1Wins)/10*100, p2Wins, float64(p2Wins)/10*100)
+	if len(p2HoldRange) == 1 {
+		p2Start, err2 = strconv.Atoi(strings.TrimSpace(p2HoldRange[0]))
+		p2End = p2Start // Single value, so start and end are the same
+	} else {
+		p2Start, p2End, err2 = parseHoldRange(p2HoldRange)
+	}
+
+	if err1 != nil || err2 != nil {
+		fmt.Println("Hold strategies must be in the format 'start-end' with positive integers.")
+		return
+	}
+
+	// Story 1: Single values for both players
+	if p1End == p1Start && p2End == p2Start {
+		p1Wins, p2Wins := simulateGamesWithStrategies(p1Start, p2Start, 10)
+		fmt.Printf("Holding at %d vs Holding at %d: wins: %d/10 (%.1f%%), losses: %d/10 (%.1f%%)\n",
+			p1Start, p2Start, p1Wins, float64(p1Wins)/10*100, p2Wins, float64(p2Wins)/10*100)
+		return
+	}
+
+	// Story 2: Fixed value for p1 (e.g., 21) and range for p2 (1-100)
+	if p1End == p1Start && p2End > p2Start {
+		for k := 1; k <= 100; k++ {
+			if k == p1Start {
+				continue // Skip when strategies are the same
+			}
+			p1Wins, p2Wins := simulateGamesWithStrategies(p1Start, k, 10)
+			fmt.Printf("Holding at %d vs Holding at %d: wins: %d/10 (%.1f%%), losses: %d/10 (%.1f%%)\n",
+				p1Start, k, p1Wins, float64(p1Wins)/10*100, p2Wins, float64(p2Wins)/10*100)
+		}
+		return
+	}
+
+	// Story 3: Range for both players (1-100)
+	if p1End > p1Start && p2End > p2Start {
+		for k := 1; k <= 100; k++ {
+			totalWins := 0
+			totalLosses := 0
+			for j := 1; j <= 100; j++ {
+				if j == k {
+					continue // Skip when strategies are the same
+				}
+				p1Wins, p2Wins := simulateGamesWithStrategies(k, j, 10)
+				totalWins += p1Wins
+				totalLosses += p2Wins
+			}
+			fmt.Printf("Result: Wins, losses staying at k = %d: %d/990 (%.1f%%), %d/990 (%.1f%%)\n",
+				k, totalWins, float64(totalWins)/990*100, totalLosses, float64(totalLosses)/990*100)
+		}
+		return
+	}
+}
+
+// New helper function to parse hold strategy ranges
+func parseHoldRange(rangeStr []string) (int, int, error) {
+	if len(rangeStr) != 2 {
+		return 0, 0, fmt.Errorf("invalid range")
+	}
+	start, err1 := strconv.Atoi(strings.TrimSpace(rangeStr[0]))
+	end, err2 := strconv.Atoi(strings.TrimSpace(rangeStr[1]))
+	if err1 != nil || err2 != nil || start < 1 || end > 100 || start > end {
+		return 0, 0, fmt.Errorf("invalid range")
+	}
+	return start, end, nil
 }
