@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type Player struct {
@@ -72,12 +73,14 @@ func playGame(p1, p2 *Player) int {
 	}
 }
 
-// New function to play the game n times and return the results
-func simulateGames(p1, p2 *Player, n int) (int, int) {
+// New function to simulate multiple games with different strategies
+func simulateGamesWithStrategies(p1HoldStrategy int, p2HoldStrategy int, n int) (int, int) {
 	p1Wins := 0
 	p2Wins := 0
 
 	for i := 0; i < n; i++ {
+		p1 := &Player{holdStrategy: p1HoldStrategy}
+		p2 := &Player{holdStrategy: p2HoldStrategy}
 		winner := playGame(p1, p2)
 		if winner == 1 {
 			p1Wins++
@@ -88,14 +91,33 @@ func simulateGames(p1, p2 *Player, n int) (int, int) {
 	return p1Wins, p2Wins
 }
 
+// Main function to handle command-line arguments and simulate games
 func main() {
-	// Parse the arguments here and pass them to simulateGames()
-	p1HoldStrategy, _ := strconv.Atoi(os.Args[1]) // Convert to int
-	p2HoldStrategy, _ := strconv.Atoi(os.Args[2]) // Convert to int
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: ./pig <player1_hold_strategy> <player2_hold_strategy>")
+		return
+	}
 
-	p1 := &Player{holdStrategy: p1HoldStrategy}
-	p2 := &Player{holdStrategy: p2HoldStrategy}
+	p1HoldStrategyStr := os.Args[1]
+	p2HoldStrategyStr := os.Args[2]
 
-	p1Wins, p2Wins := simulateGames(p1, p2, 1000) // Simulate 1000 games
-	fmt.Printf("Player 1 wins: %d, Player 2 wins: %d\n", p1Wins, p2Wins)
+	// Check for empty values or spaces
+	if p1HoldStrategyStr == "" || p2HoldStrategyStr == "" {
+		fmt.Println("Hold strategies cannot be empty.")
+		return
+	}
+
+	// Convert to int and check for valid values
+	p1HoldStrategy, err1 := strconv.Atoi(strings.TrimSpace(p1HoldStrategyStr))
+	p2HoldStrategy, err2 := strconv.Atoi(strings.TrimSpace(p2HoldStrategyStr))
+
+	if err1 != nil || err2 != nil || p1HoldStrategy <= 0 || p2HoldStrategy <= 0 {
+	 	fmt.Println("Hold strategies must be positive integers greater than 0.")
+	 	return
+	}
+
+	// Simulate 10 games between the two players
+	p1Wins, p2Wins := simulateGamesWithStrategies(p1HoldStrategy, p2HoldStrategy, 10) // Simulate 10 games
+	fmt.Printf("Holding at %d vs Holding at %d: wins: %d/10 (%.1f%%), losses: %d/10 (%.1f%%)\n",
+		p1HoldStrategy, p2HoldStrategy, p1Wins, float64(p1Wins)/10*100, p2Wins, float64(p2Wins)/10*100)
 }
