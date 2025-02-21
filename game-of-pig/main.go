@@ -24,8 +24,8 @@ func rollDie() int {
 	return rand.Intn(6) + 1
 }
 
-// Turn and game logic
-func handleRoll(roll int, turnTotal *int) bool {
+// Handles condition when dice rolls 1
+func handlePigRoll(roll int, turnTotal *int) bool {
 	if roll == 1 {
 		return false // Indicates that the player loses all points for this turn
 	}
@@ -33,11 +33,12 @@ func handleRoll(roll int, turnTotal *int) bool {
 	return true // Indicates a successful roll
 }
 
+// Handles player switching on reaching hold value
 func playTurn(p *Player) int {
 	turnTotal := 0
 	for {
 		roll := rollDie()
-		if !handleRoll(roll, &turnTotal) {
+		if !handlePigRoll(roll, &turnTotal) {
 			return 0 // Player loses all points for this turn
 		}
 		if turnTotal >= p.holdStrategy {
@@ -46,7 +47,7 @@ func playTurn(p *Player) int {
 	}
 }
 
-// Helper function to validate hold strategies
+// Helper function to validate hold strategies from input
 func validateHoldStrategies(p1HoldNum, p2HoldNum int) error {
 	if p1HoldNum <= 0 || p2HoldNum <= 0 {
 		return fmt.Errorf("hold strategies must be greater than 0")
@@ -97,7 +98,7 @@ func simulateGames(p1HoldNum, p2HoldNum int, numGames int) (GameResult, error) {
 	return result, nil
 }
 
-// Simulates a game with fixed hold strategies for both players
+// Simulates a game with fixed hold strategies for both players | Story1
 func fixedHold(hold1, hold2 int) {
 	result, err := simulateGames(hold1, hold2, 10)
 	if err != nil {
@@ -111,14 +112,14 @@ func fixedHold(hold1, hold2 int) {
 		float64(result.p2Wins)/float64(result.games)*100)
 }
 
-// Simulates games with one fixed hold and one range hold
+// Simulates games with one fixed hold and one range hold | Story2
 func rangeHold1(fixedHold, rangeStart, rangeEnd int, rangeIsFirst bool) {
 	for hold := rangeStart; hold <= rangeEnd; hold++ {
 		if hold == fixedHold {
 			continue // Skip when hold strategies are the same
 		}
 		var result GameResult
-		if rangeIsFirst {
+		if rangeIsFirst { // Bool to switch the player 1 and 2 and reuse existing code for story 2
 			result, _ = simulateGames(hold, fixedHold, 10)
 			fmt.Printf("Holding at %d vs Holding at %d: wins: %d/%d (%.1f%%), losses: %d/%d (%.1f%%)\n",
 				hold, fixedHold,
@@ -138,7 +139,7 @@ func rangeHold1(fixedHold, rangeStart, rangeEnd int, rangeIsFirst bool) {
 	}
 }
 
-// Simulates games with both players using range holds
+// Simulates games with both players using range holds | Story3
 func rangeHold2(range1Start, range1End, range2Start, range2End int) {
 	for hold1 := range1Start; hold1 <= range1End; hold1++ {
 		totalWins := 0
@@ -214,9 +215,9 @@ func main() {
 	if p1End == p1Start && p2End == p2Start {
 		fixedHold(p1Start, p2Start)
 	} else if p1End > p1Start && p2End == p2Start {
-		rangeHold1(p2Start, p1Start, p1End, true) // First player uses range
+		rangeHold1(p2Start, p1Start, p1End, true) // First player uses range like 1-100 10
 	} else if p1End == p1Start && p2End > p2Start {
-		rangeHold1(p1Start, p2Start, p2End, false) // Second player uses range
+		rangeHold1(p1Start, p2Start, p2End, false) // Second player uses range like 21 1-100
 	} else if p1End > p1Start && p2End > p2Start {
 		rangeHold2(p1Start, p1End, p2Start, p2End)
 	}

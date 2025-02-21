@@ -59,10 +59,10 @@ func TestGameMechanics(t *testing.T) {
 		}},
 		{"HandleRoll", func(t *testing.T) {
 			var turnTotal int
-			if handleRoll(1, &turnTotal) {
+			if handlePigRoll(1, &turnTotal) {
 				t.Error("Expected false for roll of 1")
 			}
-			if !handleRoll(6, &turnTotal) {
+			if !handlePigRoll(6, &turnTotal) {
 				t.Error("Expected true for roll of 6")
 			}
 		}},
@@ -78,7 +78,7 @@ func TestHandleRoll(t *testing.T) {
 	var turnTotal int
 
 	// Test for a roll of 1 (false roll)
-	if handleRoll(1, &turnTotal) {
+	if handlePigRoll(1, &turnTotal) {
 		t.Error("Expected false for roll of 1, indicating the player loses all points for this turn")
 	}
 	if turnTotal != 0 {
@@ -86,7 +86,7 @@ func TestHandleRoll(t *testing.T) {
 	}
 
 	// Test for a roll of 2
-	if !handleRoll(2, &turnTotal) {
+	if !handlePigRoll(2, &turnTotal) {
 		t.Error("Expected true for roll of 2, indicating a successful roll")
 	}
 	if turnTotal != 2 {
@@ -130,6 +130,8 @@ func TestInputParsing(t *testing.T) {
 		{"EmptyParameters", []string{""}, true, 0, 0},
 		{"InvalidString", []string{"abc", "def"}, true, 0, 0},
 		{"SingleValue", []string{"21", "15"}, false, 21, 21},
+		// {"InvalidStrategy", []string{"101", "50"}, true, 0, 0},
+		// {"InvalidStrategy", []string{"150", "100"}, true, 0, 0},
 		{"Range", []string{"1-100", "1-100"}, false, 1, 100},
 		{"InvalidRange", []string{"10-5", "1-100"}, true, 0, 0},
 		{"Story1", []string{"10", "15"}, false, 10, 10},
