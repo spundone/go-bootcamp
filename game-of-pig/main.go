@@ -199,7 +199,6 @@ func parseInput(args []string) (p1Start, p1End, p2Start, p2End int, err error) {
 	} else {
 		p2Start, p2End, err = parseHoldRange(p2Range)
 	}
-
 	return p1Start, p1End, p2Start, p2End, err
 }
 
