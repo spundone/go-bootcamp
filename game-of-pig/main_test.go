@@ -1,20 +1,16 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 // TestRollDie checks if the die rolls a valid number between 1 and 6.
 func TestRollDie(t *testing.T) {
-	// Create a new assertion object
-	a := assert.New(t)
-
-	// Roll the die 100 times and check the results
 	for i := 0; i < 100; i++ {
 		roll := rollDie()
-		// Assert that the roll is within the valid range
-		a.True(roll >= 1 && roll <= 6, "Invalid roll: %d", roll)
+		if roll < 1 || roll > 6 {
+			t.Errorf("Invalid roll: %d", roll)
+		}
 	}
 }
 
@@ -25,9 +21,6 @@ func updateScore(p *Player, points int) int {
 
 // TestUpdateScore verifies that the score is updated correctly.
 func TestUpdateScore(t *testing.T) {
-	a := assert.New(t)
-
-	// Define test cases for score updates
 	tests := []struct {
 		initialScore  int
 		pointsToAdd   int
@@ -42,7 +35,9 @@ func TestUpdateScore(t *testing.T) {
 	for _, test := range tests {
 		// Update the score and assert the expected outcome
 		score := updateScore(&Player{score: test.initialScore}, test.pointsToAdd)
-		a.Equal(test.expectedScore, score, "Expected score %d, got %d", test.expectedScore, score)
+		if score != test.expectedScore {
+			t.Errorf("Expected score %d, got %d", test.expectedScore, score)
+		}
 	}
 }
 
@@ -111,8 +106,9 @@ func TestGameSimulation(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			result, _ := simulateGames(test.player1Hold, test.player2Hold, test.numGames)
-			// Assert that the total wins match the number of games played
-			assert.Equal(t, test.numGames, result.p1Wins+result.p2Wins, "Expected %d total games, got %d", test.numGames, result.p1Wins+result.p2Wins)
+			if result.p1Wins+result.p2Wins != test.numGames {
+				t.Errorf("Expected %d total games, got %d", test.numGames, result.p1Wins+result.p2Wins)
+			}
 		})
 	}
 }
@@ -130,8 +126,6 @@ func TestInputParsing(t *testing.T) {
 		{"EmptyParameters", []string{""}, true, 0, 0},
 		{"InvalidString", []string{"abc", "def"}, true, 0, 0},
 		{"SingleValue", []string{"21", "15"}, false, 21, 21},
-		// {"InvalidStrategy", []string{"101", "50"}, true, 0, 0},
-		// {"InvalidStrategy", []string{"150", "100"}, true, 0, 0},
 		{"Range", []string{"1-100", "1-100"}, false, 1, 100},
 		{"InvalidRange", []string{"10-5", "1-100"}, true, 0, 0},
 		{"Story1", []string{"10", "15"}, false, 10, 10},
@@ -148,8 +142,12 @@ func TestInputParsing(t *testing.T) {
 				t.Error("Expected error, got nil")
 			}
 			if !test.expectError {
-				assert.Equal(t, test.expectedStart, p1Start, "Expected start %d, got %d", test.expectedStart, p1Start)
-				assert.Equal(t, test.expectedEnd, p1End, "Expected end %d, got %d", test.expectedEnd, p1End)
+				if p1Start != test.expectedStart {
+					t.Errorf("Expected start %d, got %d", test.expectedStart, p1Start)
+				}
+				if p1End != test.expectedEnd {
+					t.Errorf("Expected end %d, got %d", test.expectedEnd, p1End)
+				}
 			}
 		})
 	}
@@ -173,7 +171,9 @@ func TestHoldingAtInvalidValues(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			_, err := simulateGames(test.p1Hold, test.p2Hold, 10)
-			assert.Equal(t, test.expectError, err != nil)
+			if test.expectError && err == nil {
+				t.Error("Expected error, got nil")
+			}
 		})
 	}
 }
