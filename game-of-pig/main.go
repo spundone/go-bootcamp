@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Player struct {
@@ -42,9 +43,10 @@ func playTurn(p *Player) int {
 			return 0 // Player loses all points for this turn
 		}
 		if turnTotal >= p.holdStrategy {
-			return turnTotal
+			break // Exit the loop if the hold strategy is met
 		}
 	}
+	return turnTotal // Explicit return statement
 }
 
 // Helper function to validate hold strategies from input
@@ -203,6 +205,7 @@ func parseInput(args []string) (p1Start, p1End, p2Start, p2End int, err error) {
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	p1Start, p1End, p2Start, p2End, err := parseInput(os.Args[1:])
 	if err != nil {
 		fmt.Println("Usage: ./pig <player1_hold_strategy> <player2_hold_strategy>")
