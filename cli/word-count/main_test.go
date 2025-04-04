@@ -31,8 +31,18 @@ func TestCountFromReader(t *testing.T) {
 		},
 		{
 			name:     "multiple words per line",
-			input:    "the quick brown\nfox jumps over\n",
-			expected: Counts{lines: 2, words: 6, chars: 29},
+			input:    "the quick brown\n fox jumps over\n the lazy dog\n",
+			expected: Counts{lines: 3, words: 9, chars: 46}, // 43 chars + 3 newlines
+		},
+		{
+			name:     "lines with trailing spaces",
+			input:    "hello world   \n   \n",
+			expected: Counts{lines: 2, words: 2, chars: 19}, // 17 chars + 2 newlines
+		},
+		{
+			name:     "lines with mixed spaces and tabs",
+			input:    "hello\tworld\n\t\n",
+			expected: Counts{lines: 2, words: 2, chars: 19}, // 17 chars + 2 newlines
 		},
 	}
 
@@ -52,6 +62,9 @@ func TestCountFromReader(t *testing.T) {
 		})
 	}
 }
+
+func TestWordCountCLI(t *testing.T) {
+	
 
 func TestProcessFiles(t *testing.T) {
 	// Create temporary test files

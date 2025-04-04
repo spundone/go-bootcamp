@@ -44,6 +44,7 @@ func countFromReader(r io.Reader, name string) Counts {
 	return counts
 }
 
+// parseFlags parses command line flags and returns Options
 func parseFlags() Options {
 	lines := flag.Bool("l", false, "count lines")
 	words := flag.Bool("w", false, "count words")
@@ -57,7 +58,7 @@ func parseFlags() Options {
 	}
 }
 
-func processFiles(filenames []string, opts Options) []Counts {
+func processFiles(filenames []string, _ Options) []Counts {
 	results := make([]Counts, len(filenames))
 	var wg sync.WaitGroup
 
@@ -135,7 +136,7 @@ func main() {
 
 func printCounts(counts Counts, opts Options) {
 	format := ""
-	values := []interface{}{}
+	values := []any{}
 
 	if opts.lines {
 		format += "%8d"
